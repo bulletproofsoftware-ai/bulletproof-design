@@ -120,7 +120,7 @@
     "husky": "^9.1.7",
     "jest": "^30.0.0",
     "jest-axe": "^10.0.0",
-    "jest-environment-jsdom": "^30.3.0",
+    "jest-environment-jsdom": "^30.4.1",
     "lint-staged": "^16.4.0",
     "postcss": "^8.5.0",
     "style-dictionary": "^5.4.0",

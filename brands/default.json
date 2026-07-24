@@ -1,0 +1,27 @@
+{
+  "name": "Default",
+  "slug": "default",
+  "description": "Clean professional theme with blue primary palette",
+  "logo": { "mark": "", "horizontal": "", "favicon": "" },
+  "colors": {
+    "primary": "#3b82f6",
+    "secondary": "#f1f5f9",
+    "accent": "#eff6ff",
+    "background": "#f0f4f8",
+    "surface": "#ffffff",
+    "text": "#0f172a",
+    "textMuted": "#64748b",
+    "border": "#e2e8f0",
+    "error": "#ef4444",
+    "warning": "#f59e0b",
+    "success": "#10b981"
+  },
+  "fonts": { "heading": "Inter", "body": "Inter", "mono": "JetBrains Mono" },
+  "spacing": { "unit": 4, "scale": [0, 4, 8, 12, 16, 24, 32, 48, 64] },
+  "borderRadius": { "small": "0.375rem", "medium": "0.75rem", "large": "1rem", "full": "9999px" },
+  "shadows": {
+    "small": "0 2px 8px rgba(15, 23, 42, 0.06)",
+    "medium": "0 4px 16px rgba(15, 23, 42, 0.08)",
+    "large": "0 20px 40px rgba(15, 23, 42, 0.12)"
+  }
+}

@@ -1,0 +1,133 @@
+{
+  "name": "design-library",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "generate:tokens": "node design-tokens/config.mjs",
+    "predev": "npm run generate:tokens",
+    "dev": "next dev -p 8095",
+    "prebuild": "npm run generate:tokens",
+    "build": "next build",
+    "start": "next start -p 8095 -H 0.0.0.0",
+    "api": "tsx src/api/server.ts",
+    "typecheck": "tsc --noEmit",
+    "generate": "tsx scripts/generate-component.ts",
+    "generate:registry": "tsx scripts/generate-asset-registry.ts && tsx scripts/generate-registry.ts && tsx scripts/generate-ai-context.ts",
+    "generate:design-md": "tsx scripts/generate-design-md.ts",
+    "icons:sync": "tsx scripts/sync-icons.ts",
+    "brands:migrate": "tsx scripts/migrate-brands.ts",
+    "audit:check": "npm audit --audit-level=high --production",
+    "sbom:generate": "syft design-library:latest -o cyclonedx-json > sbom.cdx.json",
+    "test": "node --experimental-vm-modules node_modules/.bin/jest --forceExit",
+    "lint": "eslint .",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "eslint --fix"
+    ]
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "extensionsToTreatAsEsm": [
+      ".ts",
+      ".tsx"
+    ],
+    "moduleNameMapper": {
+      "^(\\.{1,2}/.*)\\.js$": "$1",
+      "^@/(.*)$": "<rootDir>/$1"
+    },
+    "transform": {
+      "^.+\\.tsx?$": [
+        "ts-jest",
+        {
+          "useESM": true,
+          "tsconfig": {
+            "module": "esnext",
+            "moduleResolution": "bundler",
+            "target": "ES2022",
+            "esModuleInterop": true,
+            "strict": true,
+            "jsx": "react-jsx",
+            "paths": {
+              "@/*": [
+                "./*"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "modulePathIgnorePatterns": [
+      "<rootDir>/.next/"
+    ]
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.82.0",
+    "@babel/standalone": "7.29.2",
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "@monaco-editor/react": "^4.7.0",
+    "@tanstack/react-virtual": "3.13.24",
+    "ajv": "8.18.0",
+    "ajv-formats": "3.0.1",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "cmdk": "^1.1.1",
+    "cors": "^2.8.5",
+    "express": "^4.21.0",
+    "express-rate-limit": "^8.3.2",
+    "glob": "^11.0.0",
+    "gray-matter": "4.0.3",
+    "helmet": "^8.1.0",
+    "lucide-react": "^0.510.0",
+    "markdown-it": "14.1.1",
+    "multer": "2.1.1",
+    "next": "^15.5.15",
+    "node-html-parser": "^7.0.0",
+    "p-limit": "3.1.0",
+    "playwright-core": "^1.59.1",
+    "radix-ui": "^1.4.3",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "sanitize-html": "2.17.3",
+    "slugify": "^1.6.9",
+    "tailwind-merge": "^3.3.0",
+    "yaml": "^2.6.0"
+  },
+  "overrides": {
+    "dompurify": ">=3.3.3"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@jest/globals": "^30.3.0",
+    "@tailwindcss/postcss": "^4.1.0",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/jest": "^30.0.0",
+    "@types/jest-axe": "^3.5.9",
+    "@types/markdown-it": "14.1.2",
+    "@types/multer": "1.4.13",
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
+    "@types/sanitize-html": "2.16.1",
+    "eslint": "^10.2.0",
+    "eslint-plugin-import": "^2.32.0",
+    "husky": "^9.1.7",
+    "jest": "^30.0.0",
+    "jest-axe": "^10.0.0",
+    "jest-environment-jsdom": "^30.3.0",
+    "lint-staged": "^16.4.0",
+    "postcss": "^8.5.0",
+    "style-dictionary": "^5.4.0",
+    "tailwindcss": "^4.1.0",
+    "ts-jest": "^29.4.9",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0",
+    "typescript-eslint": "^8.58.0"
+  }
+}

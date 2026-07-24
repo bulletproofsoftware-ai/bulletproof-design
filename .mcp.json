@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "design-system": {
+      "command": "npx",
+      "args": ["tsx", "src/mcp/design-system-server.ts"]
+    }
+  }
+}

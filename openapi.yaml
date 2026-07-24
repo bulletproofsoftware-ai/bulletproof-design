@@ -1,0 +1,354 @@
+openapi: 3.0.3
+info:
+  title: Design Library API
+  version: 1.0.0
+  description: API for managing templates, brands, and assets in the Design Library
+servers:
+  - url: http://localhost:8096
+paths:
+  /api/health:
+    get:
+      summary: Health check
+      responses:
+        "200":
+          description: OK
+  /api/categories:
+    get:
+      summary: List categories
+      responses:
+        "200":
+          description: OK
+  /api/templates/{category}:
+    get:
+      summary: List templates by category
+      parameters:
+        - name: category
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: source
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: Not found
+  /api/templates/{category}/{name}:
+    get:
+      summary: Get single template
+      parameters:
+        - name: category
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: Not found
+    put:
+      summary: Update template
+      parameters:
+        - name: category
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sourceCode:
+                  type: string
+      responses:
+        "200":
+          description: Updated
+        "400":
+          description: Bad request
+    delete:
+      summary: Delete template
+      parameters:
+        - name: category
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Deleted
+        "404":
+          description: Not found
+  /api/templates:
+    post:
+      summary: Create template
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [category, name, sourceCode]
+              properties:
+                category:
+                  type: string
+                name:
+                  type: string
+                sourceCode:
+                  type: string
+      responses:
+        "201":
+          description: Created
+        "400":
+          description: Bad request
+        "409":
+          description: Conflict
+  /api/components:
+    get:
+      summary: List components
+      responses:
+        "200":
+          description: OK
+  /api/search:
+    get:
+      summary: Search templates
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Missing query
+  /api/brands:
+    get:
+      summary: List brands
+      responses:
+        "200":
+          description: OK
+    post:
+      summary: Create brand
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, slug, colors]
+              properties:
+                name:
+                  type: string
+                slug:
+                  type: string
+                colors:
+                  type: object
+      responses:
+        "201":
+          description: Created
+        "400":
+          description: Bad request
+        "409":
+          description: Conflict
+  /api/brands/{slug}:
+    get:
+      summary: Get brand by slug
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: Not found
+    put:
+      summary: Update brand
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "200":
+          description: Updated
+    delete:
+      summary: Delete brand
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Deleted
+        "404":
+          description: Not found
+  /api/brands/{slug}/colors:
+    get:
+      summary: Get brand colors
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: Not found
+  /api/brands/{slug}/fonts:
+    get:
+      summary: Get brand fonts
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: Not found
+  /api/brands/{slug}/css-variables:
+    get:
+      summary: Get brand CSS variables
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: Not found
+  /api/brands/{slug}/assets:
+    get:
+      summary: Get brand assets
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: Not found
+  /api/import:
+    post:
+      summary: Import template from URL
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [url, category, name]
+              properties:
+                url:
+                  type: string
+                category:
+                  type: string
+                name:
+                  type: string
+      responses:
+        "200":
+          description: Generated
+        "400":
+          description: Bad request
+  /api/assets:
+    get:
+      summary: List assets
+      parameters:
+        - name: folder
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+    post:
+      summary: Upload asset
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [folder, filename, data]
+              properties:
+                folder:
+                  type: string
+                filename:
+                  type: string
+                data:
+                  type: string
+      responses:
+        "201":
+          description: Created
+        "400":
+          description: Bad request
+  /api/assets/folders:
+    get:
+      summary: List asset folders
+      responses:
+        "200":
+          description: OK
+  /preview/{category}/{name}:
+    get:
+      summary: Preview template as HTML
+      parameters:
+        - name: category
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: HTML preview
+        "404":
+          description: Not found

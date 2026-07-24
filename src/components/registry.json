@@ -1,0 +1,1209 @@
+{
+  "components": [
+    {
+      "name": "badge",
+      "tier": "ui",
+      "path": "components/ui/badge.tsx",
+      "client": false,
+      "description": "Inline status indicator with variant styles",
+      "variants": {
+        "variant": [
+          "default",
+          "secondary",
+          "destructive",
+          "outline",
+          "ghost",
+          "link"
+        ]
+      },
+      "dependencies": [
+        "class-variance-authority",
+        "radix-ui",
+        "react"
+      ],
+      "examples": [
+        {
+          "label": "Default badge",
+          "code": "<Badge>New</Badge>"
+        }
+      ],
+      "accessibility": {
+        "role": "status",
+        "notes": "Uses semantic span element"
+      }
+    },
+    {
+      "name": "button",
+      "tier": "ui",
+      "path": "components/ui/button.tsx",
+      "client": false,
+      "description": "Primary interactive control with multiple variants and sizes",
+      "variants": {
+        "variant": [
+          "default",
+          "destructive",
+          "outline",
+          "secondary",
+          "ghost",
+          "link"
+        ],
+        "size": [
+          "default",
+          "xs",
+          "sm",
+          "lg",
+          "icon",
+          "icon-xs",
+          "icon-sm",
+          "icon-lg"
+        ]
+      },
+      "dependencies": [
+        "class-variance-authority",
+        "radix-ui",
+        "react"
+      ],
+      "examples": [
+        {
+          "label": "Default button",
+          "code": "<Button>Click me</Button>"
+        },
+        {
+          "label": "Destructive button",
+          "code": "<Button variant=\"destructive\">Delete</Button>"
+        }
+      ],
+      "accessibility": {
+        "role": "button",
+        "keyboard": [
+          "Enter",
+          "Space"
+        ],
+        "notes": "Supports asChild for custom element rendering via Radix Slot"
+      }
+    },
+    {
+      "name": "card",
+      "tier": "ui",
+      "path": "components/ui/card.tsx",
+      "client": false,
+      "description": "Container component for grouping related content",
+      "dependencies": [
+        "react"
+      ],
+      "examples": [
+        {
+          "label": "Basic card",
+          "code": "<Card><CardHeader><CardTitle>Title</CardTitle></CardHeader><CardContent>Content</CardContent></Card>"
+        }
+      ],
+      "accessibility": {
+        "notes": "Semantic grouping via data-slot attributes"
+      }
+    },
+    {
+      "name": "command",
+      "tier": "ui",
+      "path": "components/ui/command.tsx",
+      "client": true,
+      "description": "Command palette built on cmdk for searchable actions",
+      "dependencies": [
+        "cmdk",
+        "lucide-react",
+        "react"
+      ],
+      "examples": [
+        {
+          "label": "Command dialog",
+          "code": "<CommandDialog><CommandInput placeholder=\"Search...\" /><CommandList><CommandEmpty>No results</CommandEmpty></CommandList></CommandDialog>"
+        }
+      ],
+      "accessibility": {
+        "role": "combobox",
+        "keyboard": [
+          "ArrowUp",
+          "ArrowDown",
+          "Enter",
+          "Escape"
+        ],
+        "notes": "Full keyboard navigation via cmdk primitives"
+      }
+    },
+    {
+      "name": "dialog",
+      "tier": "ui",
+      "path": "components/ui/dialog.tsx",
+      "client": true,
+      "description": "Modal dialog overlay using Radix Dialog primitives",
+      "dependencies": [
+        "lucide-react",
+        "radix-ui",
+        "react"
+      ],
+      "examples": [
+        {
+          "label": "Basic dialog",
+          "code": "<Dialog><DialogTrigger>Open</DialogTrigger><DialogContent><DialogTitle>Title</DialogTitle></DialogContent></Dialog>"
+        }
+      ],
+      "accessibility": {
+        "role": "dialog",
+        "keyboard": [
+          "Escape",
+          "Tab"
+        ],
+        "notes": "Focus trap and screen reader announcements via Radix"
+      }
+    },
+    {
+      "name": "dropdown-menu",
+      "tier": "ui",
+      "path": "components/ui/dropdown-menu.tsx",
+      "client": true,
+      "description": "Contextual action menu using Radix DropdownMenu primitives",
+      "dependencies": [
+        "lucide-react",
+        "radix-ui",
+        "react"
+      ],
+      "examples": [
+        {
+          "label": "Basic menu",
+          "code": "<DropdownMenu><DropdownMenuTrigger>Open</DropdownMenuTrigger><DropdownMenuContent><DropdownMenuItem>Action</DropdownMenuItem></DropdownMenuContent></DropdownMenu>"
+        }
+      ],
+      "accessibility": {
+        "role": "menu",
+        "keyboard": [
+          "ArrowUp",
+          "ArrowDown",
+          "Enter",
+          "Escape"
+        ],
+        "notes": "Full keyboard navigation via Radix"
+      }
+    },
+    {
+      "name": "input",
+      "tier": "ui",
+      "path": "components/ui/input.tsx",
+      "client": false,
+      "description": "Text input field with consistent styling and validation states",
+      "dependencies": [
+        "react"
+      ],
+      "examples": [
+        {
+          "label": "Default input",
+          "code": "<Input placeholder=\"Enter text...\" />"
+        }
+      ],
+      "accessibility": {
+        "role": "textbox",
+        "notes": "Supports aria-invalid for error states"
+      }
+    },
+    {
+      "name": "scroll-area",
+      "tier": "ui",
+      "path": "components/ui/scroll-area.tsx",
+      "client": true,
+      "description": "Custom scrollable area using Radix ScrollArea",
+      "dependencies": [
+        "radix-ui",
+        "react"
+      ],
+      "examples": [
+        {
+          "label": "Scrollable container",
+          "code": "<ScrollArea className=\"h-48\"><div>Long content...</div></ScrollArea>"
+        }
+      ],
+      "accessibility": {
+        "notes": "Provides custom scrollbar without hiding native scroll behavior from assistive tech"
+      }
+    },
+    {
+      "name": "select",
+      "tier": "ui",
+      "path": "components/ui/select.tsx",
+      "client": true,
+      "description": "Dropdown select component using Radix Select primitives",
+      "dependencies": [
+        "lucide-react",
+        "radix-ui",
+        "react"
+      ],
+      "examples": [
+        {
+          "label": "Basic select",
+          "code": "<Select><SelectTrigger><SelectValue placeholder=\"Choose...\" /></SelectTrigger><SelectContent><SelectItem value=\"a\">Option A</SelectItem></SelectContent></Select>"
+        }
+      ],
+      "accessibility": {
+        "role": "listbox",
+        "keyboard": [
+          "ArrowUp",
+          "ArrowDown",
+          "Enter",
+          "Escape",
+          "Space"
+        ],
+        "notes": "Full keyboard navigation via Radix"
+      }
+    },
+    {
+      "name": "separator",
+      "tier": "ui",
+      "path": "components/ui/separator.tsx",
+      "client": true,
+      "description": "Visual divider using Radix Separator",
+      "dependencies": [
+        "radix-ui",
+        "react"
+      ],
+      "examples": [
+        {
+          "label": "Horizontal separator",
+          "code": "<Separator />"
+        }
+      ],
+      "accessibility": {
+        "role": "separator",
+        "notes": "Sets appropriate role and orientation automatically"
+      }
+    },
+    {
+      "name": "sheet",
+      "tier": "ui",
+      "path": "components/ui/sheet.tsx",
+      "client": true,
+      "description": "Slide-out panel using Radix Dialog primitives",
+      "dependencies": [
+        "lucide-react",
+        "radix-ui",
+        "react"
+      ],
+      "examples": [
+        {
+          "label": "Right sheet",
+          "code": "<Sheet><SheetTrigger>Open</SheetTrigger><SheetContent>Panel content</SheetContent></Sheet>"
+        }
+      ],
+      "accessibility": {
+        "role": "dialog",
+        "keyboard": [
+          "Escape",
+          "Tab"
+        ],
+        "notes": "Focus trap and screen reader announcements"
+      }
+    },
+    {
+      "name": "tabs",
+      "tier": "ui",
+      "path": "components/ui/tabs.tsx",
+      "client": true,
+      "description": "Tab navigation component using Radix Tabs with CVA variants",
+      "variants": {
+        "variant": [
+          "default",
+          "line"
+        ]
+      },
+      "dependencies": [
+        "class-variance-authority",
+        "radix-ui",
+        "react"
+      ],
+      "examples": [
+        {
+          "label": "Basic tabs",
+          "code": "<Tabs defaultValue=\"a\"><TabsList><TabsTrigger value=\"a\">Tab A</TabsTrigger></TabsList><TabsContent value=\"a\">Content A</TabsContent></Tabs>"
+        }
+      ],
+      "accessibility": {
+        "role": "tablist",
+        "keyboard": [
+          "ArrowLeft",
+          "ArrowRight",
+          "Home",
+          "End"
+        ],
+        "notes": "Full keyboard navigation via Radix"
+      }
+    },
+    {
+      "name": "tooltip",
+      "tier": "ui",
+      "path": "components/ui/tooltip.tsx",
+      "client": true,
+      "description": "Informational popup on hover using Radix Tooltip",
+      "dependencies": [
+        "radix-ui",
+        "react"
+      ],
+      "examples": [
+        {
+          "label": "Basic tooltip",
+          "code": "<TooltipProvider><Tooltip><TooltipTrigger>Hover</TooltipTrigger><TooltipContent>Info</TooltipContent></Tooltip></TooltipProvider>"
+        }
+      ],
+      "accessibility": {
+        "role": "tooltip",
+        "notes": "Accessible via Radix, shown on focus as well as hover"
+      }
+    },
+    {
+      "name": "ColorPicker",
+      "tier": "primitives",
+      "path": "components/primitives/ColorPicker/ColorPicker.tsx",
+      "client": true,
+      "description": "Color selection control with native picker and hex text input",
+      "props": [
+        {
+          "name": "label",
+          "type": "string"
+        },
+        {
+          "name": "value",
+          "type": "string"
+        },
+        {
+          "name": "onChange",
+          "type": "(value: string) => void"
+        }
+      ],
+      "dependencies": [
+        "react"
+      ],
+      "examples": [
+        {
+          "label": "Basic color picker",
+          "code": "<ColorPicker label=\"Primary\" value=\"#3b82f6\" onChange={setValue} />"
+        }
+      ],
+      "accessibility": {
+        "keyboard": [
+          "Tab",
+          "Enter"
+        ],
+        "notes": "Uses native color input for accessibility; hex text input for manual entry"
+      }
+    },
+    {
+      "name": "ConfirmDialog",
+      "tier": "primitives",
+      "path": "components/primitives/ConfirmDialog/ConfirmDialog.tsx",
+      "client": true,
+      "description": "Confirmation modal wrapping Dialog with confirm and cancel actions",
+      "props": [
+        {
+          "name": "open",
+          "type": "boolean"
+        },
+        {
+          "name": "onOpenChange",
+          "type": "(open: boolean) => void"
+        },
+        {
+          "name": "title",
+          "type": "string"
+        },
+        {
+          "name": "description",
+          "type": "string"
+        },
+        {
+          "name": "confirmLabel",
+          "type": "string"
+        },
+        {
+          "name": "cancelLabel",
+          "type": "string"
+        },
+        {
+          "name": "variant",
+          "type": "\"default\" | \"destructive\""
+        },
+        {
+          "name": "onConfirm",
+          "type": "() => void"
+        }
+      ],
+      "examples": [
+        {
+          "label": "Delete confirmation",
+          "code": "<ConfirmDialog open={open} onOpenChange={setOpen} title=\"Delete?\" description=\"This action cannot be undone.\" variant=\"destructive\" onConfirm={handleDelete} />"
+        }
+      ],
+      "accessibility": {
+        "role": "alertdialog",
+        "keyboard": [
+          "Escape",
+          "Tab",
+          "Enter"
+        ],
+        "notes": "Traps focus; destructive variant draws attention to confirm button"
+      }
+    },
+    {
+      "name": "FontPicker",
+      "tier": "primitives",
+      "path": "components/primitives/FontPicker/FontPicker.tsx",
+      "client": true,
+      "description": "Font selection dropdown with preset fonts and custom font entry",
+      "props": [
+        {
+          "name": "label",
+          "type": "string"
+        },
+        {
+          "name": "value",
+          "type": "string"
+        },
+        {
+          "name": "onChange",
+          "type": "(value: string) => void"
+        },
+        {
+          "name": "filter",
+          "type": "\"all\" | \"sans\" | \"serif\" | \"mono\""
+        }
+      ],
+      "dependencies": [
+        "react"
+      ],
+      "examples": [
+        {
+          "label": "Basic font picker",
+          "code": "<FontPicker label=\"Heading\" value=\"Inter\" onChange={setFont} />"
+        }
+      ],
+      "accessibility": {
+        "keyboard": [
+          "ArrowUp",
+          "ArrowDown",
+          "Enter",
+          "Escape"
+        ],
+        "notes": "Built on Select primitive; supports custom font input mode"
+      }
+    },
+    {
+      "name": "IconButton",
+      "tier": "primitives",
+      "path": "components/primitives/IconButton/IconButton.tsx",
+      "client": true,
+      "description": "Button variant displaying only an icon with an accessible label",
+      "props": [
+        {
+          "name": "icon",
+          "type": "LucideIcon"
+        },
+        {
+          "name": "label",
+          "type": "string"
+        },
+        {
+          "name": "iconSize",
+          "type": "number"
+        }
+      ],
+      "dependencies": [
+        "lucide-react",
+        "react"
+      ],
+      "examples": [
+        {
+          "label": "Settings icon button",
+          "code": "<IconButton icon={Settings} label=\"Settings\" />"
+        }
+      ],
+      "accessibility": {
+        "role": "button",
+        "keyboard": [
+          "Enter",
+          "Space"
+        ],
+        "notes": "Uses aria-label for screen readers; icon is decorative"
+      }
+    },
+    {
+      "name": "TagInput",
+      "tier": "primitives",
+      "path": "components/primitives/TagInput/TagInput.tsx",
+      "client": true,
+      "description": "Multi-value tag entry with keyboard support for add and remove",
+      "props": [
+        {
+          "name": "tags",
+          "type": "string[]"
+        },
+        {
+          "name": "onChange",
+          "type": "(tags: string[]) => void"
+        },
+        {
+          "name": "placeholder",
+          "type": "string"
+        }
+      ],
+      "dependencies": [
+        "lucide-react",
+        "react"
+      ],
+      "examples": [
+        {
+          "label": "Basic tag input",
+          "code": "<TagInput tags={tags} onChange={setTags} placeholder=\"Add tag...\" />"
+        }
+      ],
+      "accessibility": {
+        "keyboard": [
+          "Enter",
+          "Backspace"
+        ],
+        "notes": "Enter adds tag; Backspace removes last tag when input is empty"
+      }
+    },
+    {
+      "name": "AssetCard",
+      "tier": "features",
+      "path": "components/features/AssetCard/AssetCard.tsx",
+      "client": true,
+      "description": "Card displaying an asset preview with name, size, and MIME type badge",
+      "props": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "url",
+          "type": "string"
+        },
+        {
+          "name": "size",
+          "type": "number"
+        },
+        {
+          "name": "mimeType",
+          "type": "string"
+        },
+        {
+          "name": "onClick",
+          "type": "() => void"
+        }
+      ],
+      "dependencies": [
+        "lucide-react"
+      ],
+      "examples": [
+        {
+          "label": "SVG asset",
+          "code": "<AssetCard name=\"logo.svg\" url=\"/assets/logo.svg\" size={1024} mimeType=\"image/svg+xml\" />"
+        }
+      ],
+      "accessibility": {
+        "notes": "Clickable card; image assets display preview, non-image assets show file icon"
+      }
+    },
+    {
+      "name": "BrandCard",
+      "tier": "features",
+      "path": "components/features/BrandCard/BrandCard.tsx",
+      "client": true,
+      "description": "Card displaying a brand identity with color swatch and description",
+      "props": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "slug",
+          "type": "string"
+        },
+        {
+          "name": "description",
+          "type": "string"
+        },
+        {
+          "name": "primaryColor",
+          "type": "string"
+        },
+        {
+          "name": "brand",
+          "type": "Pick<BrandConfig, \"colors\">"
+        },
+        {
+          "name": "onClick",
+          "type": "() => void"
+        }
+      ],
+      "examples": [
+        {
+          "label": "Brand card",
+          "code": "<BrandCard name=\"Acme\" slug=\"acme\" description=\"Corporate identity\" primaryColor=\"#3b82f6\" />"
+        }
+      ],
+      "accessibility": {
+        "notes": "Clickable card with color swatch indicator"
+      }
+    },
+    {
+      "name": "Breadcrumbs",
+      "tier": "features",
+      "path": "components/features/Breadcrumbs/Breadcrumbs.tsx",
+      "client": true,
+      "description": "Navigation breadcrumb trail with linked segments",
+      "props": [
+        {
+          "name": "items",
+          "type": "BreadcrumbItem[]"
+        }
+      ],
+      "dependencies": [
+        "lucide-react",
+        "next"
+      ],
+      "examples": [
+        {
+          "label": "Basic breadcrumbs",
+          "code": "<Breadcrumbs items={[{ label: \"Home\", href: \"/\" }, { label: \"Templates\" }]} />"
+        }
+      ],
+      "accessibility": {
+        "role": "navigation",
+        "keyboard": [
+          "Tab"
+        ],
+        "notes": "Uses nav element; last item is non-interactive current page indicator"
+      }
+    },
+    {
+      "name": "ColorSwatch",
+      "tier": "features",
+      "path": "components/features/ColorSwatch/ColorSwatch.tsx",
+      "client": true,
+      "description": "Individual brand color specimen with hex, RGB, and role metadata",
+      "props": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "hex",
+          "type": "string"
+        },
+        {
+          "name": "rgb",
+          "type": "[number, number, number]"
+        }
+      ],
+      "dependencies": [
+        "react"
+      ],
+      "examples": [
+        {
+          "label": "Primary swatch",
+          "code": "<ColorSwatch name=\"Brand Primary\" hex=\"#0057B8\" rgb={[0, 87, 184]} />"
+        }
+      ],
+      "accessibility": {
+        "notes": "Colour name and hex are exposed as text so value is not conveyed by colour alone"
+      }
+    },
+    {
+      "name": "ComponentSpecViewer",
+      "tier": "features",
+      "path": "components/features/ComponentSpecViewer/ComponentSpecViewer.tsx",
+      "client": true,
+      "description": "Combined spec viewer (props, variants, examples, playground) for a single component",
+      "dependencies": [
+        "lucide-react",
+        "next",
+        "react"
+      ],
+      "examples": [
+        {
+          "label": "View Button spec",
+          "code": "<ComponentSpecViewer componentName=\"Button\" />"
+        }
+      ],
+      "accessibility": {
+        "notes": "Uses semantic headings and tab landmarks for sections"
+      }
+    },
+    {
+      "name": "Playground",
+      "tier": "features",
+      "path": "components/features/ComponentSpecViewer/Playground.tsx",
+      "client": true,
+      "description": "Client-side JSX sandbox that transpiles user code with Babel standalone and renders a live preview",
+      "props": [
+        {
+          "name": "componentName",
+          "type": "string"
+        },
+        {
+          "name": "initialCode",
+          "type": "string"
+        }
+      ],
+      "dependencies": [
+        "@babel/standalone",
+        "react"
+      ],
+      "examples": [
+        {
+          "label": "Button playground",
+          "code": "<Playground componentName=\"Button\" initialCode=\"<Button>Click</Button>\" />"
+        }
+      ],
+      "accessibility": {
+        "notes": "Code editor is keyboard-accessible; errors are surfaced in a labelled live region"
+      }
+    },
+    {
+      "name": "VariantsGallery",
+      "tier": "features",
+      "path": "components/features/ComponentSpecViewer/VariantsGallery.tsx",
+      "client": true,
+      "description": "Grid of rendered variant combinations for a component, driven by the registry spec",
+      "props": [
+        {
+          "name": "componentName",
+          "type": "string"
+        },
+        {
+          "name": "variants",
+          "type": "ComponentSpec[\"variants\"]"
+        }
+      ],
+      "examples": [
+        {
+          "label": "Button variants",
+          "code": "<VariantsGallery componentName=\"Button\" variants={spec.variants} />"
+        }
+      ],
+      "accessibility": {
+        "notes": "Each variant is labelled with its prop combination for screen readers"
+      }
+    },
+    {
+      "name": "LivePreview",
+      "tier": "features",
+      "path": "components/features/LivePreview/LivePreview.tsx",
+      "client": true,
+      "description": "Iframe-based live preview panel with refresh control",
+      "props": [
+        {
+          "name": "url",
+          "type": "string"
+        },
+        {
+          "name": "className",
+          "type": "string"
+        }
+      ],
+      "dependencies": [
+        "lucide-react",
+        "react"
+      ],
+      "examples": [
+        {
+          "label": "Template preview",
+          "code": "<LivePreview url=\"/preview/template-1\" />"
+        }
+      ],
+      "accessibility": {
+        "notes": "Iframe has descriptive title attribute; refresh button is keyboard accessible"
+      }
+    },
+    {
+      "name": "LogoLockupCard",
+      "tier": "features",
+      "path": "components/features/LogoLockupCard/LogoLockupCard.tsx",
+      "client": false,
+      "description": "Preview card for a brand logo variant with label, usage note, and download action",
+      "props": [
+        {
+          "name": "url",
+          "type": "string"
+        },
+        {
+          "name": "label",
+          "type": "string"
+        },
+        {
+          "name": "usage",
+          "type": "string"
+        },
+        {
+          "name": "preferred",
+          "type": "boolean"
+        },
+        {
+          "name": "downloadName",
+          "type": "string"
+        }
+      ],
+      "dependencies": [
+        "lucide-react"
+      ],
+      "examples": [
+        {
+          "label": "Horizontal lockup",
+          "code": "<LogoLockupCard url=\"/brand-assets/acme/horizontal.svg\" label=\"Horizontal\" usage=\"Primary lockup\" preferred downloadName=\"acme-horizontal.svg\" />"
+        }
+      ],
+      "accessibility": {
+        "notes": "Download link carries descriptive aria-label; preferred state has visible and text cue"
+      }
+    },
+    {
+      "name": "MonacoEditor",
+      "tier": "features",
+      "path": "components/features/MonacoEditor/MonacoEditor.tsx",
+      "client": true,
+      "description": "Monaco code editor wrapper with dark theme and sensible defaults",
+      "props": [
+        {
+          "name": "value",
+          "type": "string"
+        },
+        {
+          "name": "onChange",
+          "type": "(value: string) => void"
+        },
+        {
+          "name": "language",
+          "type": "string"
+        },
+        {
+          "name": "height",
+          "type": "string"
+        }
+      ],
+      "dependencies": [
+        "next"
+      ],
+      "examples": [
+        {
+          "label": "TypeScript editor",
+          "code": "<MonacoEditor value={code} onChange={setCode} language=\"typescript\" />"
+        }
+      ],
+      "accessibility": {
+        "notes": "Monaco provides built-in keyboard navigation and screen reader support"
+      }
+    },
+    {
+      "name": "Nav",
+      "tier": "features",
+      "path": "components/features/Nav/Nav.tsx",
+      "client": true,
+      "description": "Top navigation bar with route links and command palette trigger",
+      "dependencies": [
+        "lucide-react",
+        "next",
+        "react"
+      ],
+      "examples": [
+        {
+          "label": "Navigation bar",
+          "code": "<Nav />"
+        }
+      ],
+      "accessibility": {
+        "role": "navigation",
+        "keyboard": [
+          "Tab",
+          "Cmd+K"
+        ],
+        "notes": "Cmd+K opens search command palette; active route is visually highlighted"
+      }
+    },
+    {
+      "name": "PortalBreadcrumbs",
+      "tier": "features",
+      "path": "components/features/PortalBreadcrumbs/PortalBreadcrumbs.tsx",
+      "client": false,
+      "description": "Breadcrumb trail for brand portal pages with the current page as the final non-link item",
+      "props": [
+        {
+          "name": "items",
+          "type": "PortalBreadcrumbItem[]"
+        }
+      ],
+      "dependencies": [
+        "next"
+      ],
+      "examples": [
+        {
+          "label": "Portal breadcrumb",
+          "code": "<PortalBreadcrumbs items={[{ label: \"Acme\", href: \"/portal/acme\" }, { label: \"Colors\" }]} />"
+        }
+      ],
+      "accessibility": {
+        "role": "navigation",
+        "notes": "Uses nav + aria-label=\"Breadcrumb\" with aria-current on the active crumb"
+      }
+    },
+    {
+      "name": "PortalSidebar",
+      "tier": "features",
+      "path": "components/features/PortalSidebar/PortalSidebar.tsx",
+      "client": true,
+      "description": "Collapsible sidebar for brand portal layouts with section groups and active-route highlighting",
+      "props": [
+        {
+          "name": "slug",
+          "type": "string"
+        },
+        {
+          "name": "brandName",
+          "type": "string"
+        },
+        {
+          "name": "brandInitial",
+          "type": "string"
+        },
+        {
+          "name": "brandInitialColor",
+          "type": "string"
+        },
+        {
+          "name": "extraSections",
+          "type": "Array<{ title: string"
+        }
+      ],
+      "dependencies": [
+        "next"
+      ],
+      "examples": [
+        {
+          "label": "Brand portal sidebar",
+          "code": "<PortalSidebar slug=\"acme\" brandName=\"Acme Corp\" brandInitial=\"A\" brandInitialColor=\"#0057B8\" />"
+        }
+      ],
+      "accessibility": {
+        "role": "navigation",
+        "keyboard": [
+          "Tab",
+          "Enter",
+          "Space"
+        ],
+        "notes": "Active link is marked with aria-current=\"page\""
+      }
+    },
+    {
+      "name": "PortalTopNav",
+      "tier": "features",
+      "path": "components/features/PortalTopNav/PortalTopNav.tsx",
+      "client": false,
+      "description": "Top-level navigation bar for brand portal pages with Design Library section links and active-state indicator",
+      "props": [
+        {
+          "name": "activeSection",
+          "type": "PortalTopNavSection"
+        }
+      ],
+      "dependencies": [
+        "next"
+      ],
+      "examples": [
+        {
+          "label": "Brands section active",
+          "code": "<PortalTopNav activeSection=\"brands\" />"
+        }
+      ],
+      "accessibility": {
+        "role": "banner",
+        "keyboard": [
+          "Tab",
+          "Enter"
+        ],
+        "notes": "Uses aria-current=\"page\" on the active link; nav is labelled \"Design Library sections\""
+      }
+    },
+    {
+      "name": "SanitisedHtml",
+      "tier": "features",
+      "path": "components/features/SanitisedHtml/SanitisedHtml.tsx",
+      "client": false,
+      "description": "Server component that renders pre-sanitised HTML (already run through sanitize-html)",
+      "props": [
+        {
+          "name": "html",
+          "type": "string"
+        },
+        {
+          "name": "className",
+          "type": "string"
+        }
+      ],
+      "dependencies": [
+        "react"
+      ],
+      "examples": [
+        {
+          "label": "Guidelines section body",
+          "code": "<SanitisedHtml html={section.html} className=\"prose\" />"
+        }
+      ],
+      "accessibility": {
+        "notes": "Relies on upstream sanitisation; never accepts raw user HTML at render time"
+      }
+    },
+    {
+      "name": "SearchCommand",
+      "tier": "features",
+      "path": "components/features/SearchCommand/SearchCommand.tsx",
+      "client": true,
+      "description": "Command palette for searching templates and brands with Cmd+K shortcut",
+      "props": [
+        {
+          "name": "open",
+          "type": "boolean"
+        },
+        {
+          "name": "onOpenChange",
+          "type": "(open: boolean) => void"
+        }
+      ],
+      "dependencies": [
+        "next",
+        "react"
+      ],
+      "examples": [
+        {
+          "label": "Search command",
+          "code": "<SearchCommand open={open} onOpenChange={setOpen} />"
+        }
+      ],
+      "accessibility": {
+        "role": "combobox",
+        "keyboard": [
+          "Cmd+K",
+          "ArrowUp",
+          "ArrowDown",
+          "Enter",
+          "Escape"
+        ],
+        "notes": "Full keyboard navigation; results grouped by type"
+      }
+    },
+    {
+      "name": "Sidebar",
+      "tier": "features",
+      "path": "components/features/Sidebar/Sidebar.tsx",
+      "client": true,
+      "description": "Collapsible sidebar navigation with sections, search, and category counts",
+      "dependencies": [
+        "lucide-react",
+        "next",
+        "react"
+      ],
+      "examples": [
+        {
+          "label": "Sidebar navigation",
+          "code": "<Sidebar />"
+        }
+      ],
+      "accessibility": {
+        "role": "navigation",
+        "keyboard": [
+          "Tab",
+          "Enter",
+          "Space"
+        ],
+        "notes": "Collapsible sections; search filters visible items"
+      }
+    },
+    {
+      "name": "TemplateCard",
+      "tier": "features",
+      "path": "components/features/TemplateCard/TemplateCard.tsx",
+      "client": false,
+      "description": "Card displaying a template with name, description, category badge, and tags",
+      "props": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "description",
+          "type": "string"
+        },
+        {
+          "name": "category",
+          "type": "string"
+        },
+        {
+          "name": "tags",
+          "type": "string[]"
+        },
+        {
+          "name": "onClick",
+          "type": "() => void"
+        },
+        {
+          "name": "className",
+          "type": "string"
+        }
+      ],
+      "examples": [
+        {
+          "label": "Template card",
+          "code": "<TemplateCard name=\"Hero Section\" category=\"landing\" tags={[\"hero\", \"cta\"]} />"
+        }
+      ],
+      "accessibility": {
+        "notes": "Clickable card with badge indicators for category and tags"
+      }
+    },
+    {
+      "name": "TypeSpecimen",
+      "tier": "features",
+      "path": "components/features/TypeSpecimen/TypeSpecimen.tsx",
+      "client": false,
+      "description": "Typography specimen row showing family, weight, size, line-height, and a sample string",
+      "props": [
+        {
+          "name": "label",
+          "type": "string"
+        },
+        {
+          "name": "sample",
+          "type": "string"
+        },
+        {
+          "name": "family",
+          "type": "string"
+        },
+        {
+          "name": "size",
+          "type": "string"
+        },
+        {
+          "name": "lineHeight",
+          "type": "string"
+        },
+        {
+          "name": "weight",
+          "type": "number | string"
+        }
+      ],
+      "examples": [
+        {
+          "label": "Heading specimen",
+          "code": "<TypeSpecimen label=\"H1\" sample=\"The quick brown fox\" family=\"Inter\" size=\"2.25rem\" lineHeight=\"1.2\" weight={700} />"
+        }
+      ],
+      "accessibility": {
+        "notes": "Label and metadata are exposed as text so styling is not conveyed by appearance alone"
+      }
+    }
+  ]
+}

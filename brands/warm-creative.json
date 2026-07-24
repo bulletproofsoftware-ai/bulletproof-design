@@ -1,0 +1,27 @@
+{
+  "name": "Warm Creative",
+  "slug": "warm-creative",
+  "description": "Warm coral palette with serif headings for creative studios",
+  "logo": { "mark": "", "horizontal": "", "favicon": "" },
+  "colors": {
+    "primary": "#e11d48",
+    "secondary": "#fef2f2",
+    "accent": "#fff1f2",
+    "background": "#fffbeb",
+    "surface": "#ffffff",
+    "text": "#1c1917",
+    "textMuted": "#78716c",
+    "border": "#e7e5e4",
+    "error": "#dc2626",
+    "warning": "#d97706",
+    "success": "#059669"
+  },
+  "fonts": { "heading": "Playfair Display", "body": "Source Sans 3", "mono": "JetBrains Mono" },
+  "spacing": { "unit": 4, "scale": [0, 4, 8, 12, 16, 24, 32, 48, 64] },
+  "borderRadius": { "small": "0.5rem", "medium": "1rem", "large": "1.5rem", "full": "9999px" },
+  "shadows": {
+    "small": "0 2px 8px rgba(28, 25, 23, 0.06)",
+    "medium": "0 4px 16px rgba(28, 25, 23, 0.08)",
+    "large": "0 20px 40px rgba(28, 25, 23, 0.12)"
+  }
+}

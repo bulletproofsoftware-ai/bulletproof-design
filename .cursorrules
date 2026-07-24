@@ -1,0 +1,13 @@
+This project uses a four-tier design system.
+
+Components are organized in:
+- components/ui/ — pristine shadcn/ui primitives, do not edit
+- components/primitives/ — domain-agnostic compositions
+- components/features/ — product-level compositions
+- components/effects/ — animated/marketing components
+
+Before creating a new component, check if it already exists in the registry.
+Use semantic design tokens (--ds-*) instead of hardcoded colors.
+Every new component needs an accessibility test with jest-axe.
+
+See src/components/ai-context.md for full system documentation.

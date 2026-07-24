@@ -1,0 +1,57 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "required": ["components"],
+  "properties": {
+    "components": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "tier", "path", "client"],
+        "properties": {
+          "name": { "type": "string" },
+          "tier": { "enum": ["ui", "primitives", "features", "effects"] },
+          "path": { "type": "string" },
+          "description": { "type": "string" },
+          "client": { "type": "boolean" },
+          "props": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["name", "type"],
+              "properties": {
+                "name": { "type": "string" },
+                "type": { "type": "string" },
+                "default": { "type": "string" },
+                "description": { "type": "string" }
+              }
+            }
+          },
+          "variants": { "type": "object" },
+          "tokens": { "type": "array", "items": { "type": "string" } },
+          "dependencies": { "type": "array", "items": { "type": "string" } },
+          "examples": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["label", "code"],
+              "properties": {
+                "label": { "type": "string" },
+                "code": { "type": "string" }
+              }
+            }
+          },
+          "accessibility": {
+            "type": "object",
+            "properties": {
+              "role": { "type": "string" },
+              "keyboard": { "type": "array", "items": { "type": "string" } },
+              "notes": { "type": "string" }
+            }
+          },
+          "incomplete": { "type": "boolean" }
+        }
+      }
+    }
+  }
+}

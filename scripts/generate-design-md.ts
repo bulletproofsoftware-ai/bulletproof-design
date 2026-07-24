@@ -1,0 +1,365 @@
+/**
+ * Bridge: export each brand in this Design Library as an Open Design
+ * (nexu-io/open-design) design system.
+ *
+ * For every brand in `brands/*.json` it emits a folder:
+ *   <out>/<slug>/
+ *     ├── DESIGN.md      (the 9-section schema Open Design's picker reads)
+ *     ├── tokens.css     (compiled CSS custom properties)
+ *     └── manifest.json  (machine-readable metadata)
+ *
+ * The 9-section DESIGN.md schema is documented at
+ * github.com/nexu-io/open-design/blob/main/docs/design-systems.md
+ *
+ * Output dir defaults to `open-design-export/design-systems/` and is
+ * overridable so it can write straight into an Open Design checkout:
+ *   OD_DESIGN_SYSTEMS_DIR=~/Code/open-design/design-systems npm run generate:design-md
+ *
+ * Run: npx tsx scripts/generate-design-md.ts
+ */
+
+import { readFile, writeFile, mkdir, readdir } from "node:fs/promises";
+import { resolve, dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const ROOT = resolve(__dirname, "..");
+
+// ---------------------------------------------------------------------------
+// Types — mirror the on-disk brand config + DTCG token file
+// ---------------------------------------------------------------------------
+
+export interface BrandConfig {
+  name: string;
+  slug: string;
+  description?: string;
+  colors: {
+    primary: string;
+    secondary: string;
+    accent: string;
+    background: string;
+    surface: string;
+    text: string;
+    textMuted: string;
+    border: string;
+    error: string;
+    warning: string;
+    success: string;
+  };
+  fonts: { heading: string; body: string; mono: string };
+  spacing: { unit: number; scale: number[] };
+  borderRadius: { small: string; medium: string; large: string; full: string };
+  shadows: { small: string; medium: string; large: string };
+}
+
+type TokenValue = { $value: string; $type: string };
+type TokenCategory = Record<string, TokenValue>;
+export type TokenFile = Record<string, TokenCategory>;
+
+export interface DesignSystemBundle {
+  slug: string;
+  designMd: string;
+  tokensCss: string;
+  manifest: Record<string, unknown>;
+}
+
+// ---------------------------------------------------------------------------
+// Pure builders — no I/O, fully unit-testable
+// ---------------------------------------------------------------------------
+
+/** Map a brand's flat colors onto Open Design's `--color-*` role names. */
+function colorVars(b: BrandConfig): Array<[string, string]> {
+  return [
+    ["--color-primary", b.colors.primary],
+    ["--color-secondary", b.colors.secondary],
+    ["--color-accent", b.colors.accent],
+    ["--color-bg", b.colors.background],
+    ["--color-surface", b.colors.surface],
+    ["--color-text", b.colors.text],
+    ["--color-text-muted", b.colors.textMuted],
+    ["--color-border", b.colors.border],
+    ["--color-success", b.colors.success],
+    ["--color-warning", b.colors.warning],
+    ["--color-error", b.colors.error],
+  ];
+}
+
+function fontVars(b: BrandConfig): Array<[string, string]> {
+  return [
+    ["--font-display", `"${b.fonts.heading}", system-ui, sans-serif`],
+    ["--font-body", `"${b.fonts.body}", system-ui, sans-serif`],
+    ["--font-mono", `"${b.fonts.mono}", ui-monospace, monospace`],
+  ];
+}
+
+/** Brand spacing scale → `--space-<i>` vars (index → Npx). */
+function spaceVars(b: BrandConfig): Array<[string, string]> {
+  return b.spacing.scale.map((px, i) => [`--space-${i}`, `${px}px`]);
+}
+
+function radiusVars(b: BrandConfig): Array<[string, string]> {
+  return [
+    ["--radius-sm", b.borderRadius.small],
+    ["--radius-md", b.borderRadius.medium],
+    ["--radius-lg", b.borderRadius.large],
+    ["--radius-full", b.borderRadius.full],
+  ];
+}
+
+function shadowVars(b: BrandConfig): Array<[string, string]> {
+  return [
+    ["--shadow-sm", b.shadows.small],
+    ["--shadow-md", b.shadows.medium],
+    ["--shadow-lg", b.shadows.large],
+  ];
+}
+
+/** Global motion durations (shared library baseline, not brand-specific). */
+function motionVars(tokens: TokenFile): Array<[string, string]> {
+  const motion = tokens.motion ?? {};
+  return [
+    ["--motion-fast", motion.fast?.$value ?? "150ms"],
+    ["--motion-normal", motion.normal?.$value ?? "300ms"],
+    ["--motion-slow", motion.slow?.$value ?? "500ms"],
+  ];
+}
+
+function renderRootBlock(pairs: Array<[string, string]>): string {
+  const body = pairs.map(([k, v]) => `  ${k}: ${v};`).join("\n");
+  return `:root {\n${body}\n}`;
+}
+
+/** Full compiled `tokens.css` for one brand (every var on `:root`). */
+export function buildTokensCss(b: BrandConfig, tokens: TokenFile): string {
+  const all = [
+    ...colorVars(b),
+    ...fontVars(b),
+    ...spaceVars(b),
+    ...radiusVars(b),
+    ...shadowVars(b),
+    ...motionVars(tokens),
+  ];
+  return `/* ${b.name} — compiled design tokens. Auto-generated by generate-design-md.ts. */\n${renderRootBlock(
+    all,
+  )}\n`;
+}
+
+/** Canonical CSS component set (§6) — semantic token refs, no hardcoded color. */
+function componentsCss(): string {
+  return `\`\`\`css
+.btn {
+  font-family: var(--font-body);
+  background: var(--color-primary);
+  color: var(--color-surface);
+  padding: var(--space-2) var(--space-4);
+  border: none;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  transition: filter var(--motion-fast) ease;
+  cursor: pointer;
+}
+.btn:hover { filter: brightness(0.94); }
+.btn:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+
+.card {
+  background: var(--color-surface);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: var(--space-5);
+}
+
+.input {
+  font-family: var(--font-body);
+  background: var(--color-bg);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-2) var(--space-3);
+}
+.input:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 1px; }
+
+.badge {
+  font-family: var(--font-body);
+  background: var(--color-accent);
+  color: var(--color-primary);
+  border-radius: var(--radius-full);
+  padding: var(--space-1) var(--space-3);
+  font-size: 0.75rem;
+}
+\`\`\``;
+}
+
+/** Build the full 9-section DESIGN.md for one brand. */
+export function buildDesignMd(b: BrandConfig, tokens: TokenFile): string {
+  const summary = b.description ?? `${b.name} design system`;
+
+  const colorTable = [
+    "| Role | Token | Value |",
+    "| --- | --- | --- |",
+    ...colorVars(b).map(([k, v]) => `| ${k.replace("--color-", "")} | \`${k}\` | \`${v}\` |`),
+  ].join("\n");
+
+  return `# ${b.name}
+
+> Category: Design Library
+> ${summary}
+
+## 1. Visual Theme & Atmosphere
+
+${summary}. Generated from the Design Library brand \`${b.slug}\`, this system carries the brand's palette, type, and spacing into agent-generated artifacts so every output reads as on-brand. Use it for product UI, marketing pages, and dashboards that must match the ${b.name} identity. Prior art: shadcn/ui primitives with DTCG design tokens.
+
+## 2. Color
+
+\`\`\`css
+${renderRootBlock(colorVars(b))}
+\`\`\`
+
+${colorTable}
+
+> Contrast: pairings target WCAG AA (4.5:1 for body text) — verify before shipping critical surfaces.
+
+## 3. Typography
+
+\`\`\`css
+${renderRootBlock(fontVars(b))}
+\`\`\`
+
+- Display: ${b.fonts.heading} — headings, hero, large numerals.
+- Body: ${b.fonts.body} — paragraphs, labels, UI text.
+- Mono: ${b.fonts.mono} — code, tabular data, technical detail.
+
+## 4. Spacing
+
+A ${b.spacing.unit}px base unit. Compose layout from these steps only.
+
+\`\`\`css
+${renderRootBlock(spaceVars(b))}
+\`\`\`
+
+## 5. Layout & Composition
+
+Content sits on a 12-column grid with a max content width near 1200px. Group related elements with \`.card\` surfaces, separate sections with spacing steps (\`--space-5\`+), and keep a clear primary action per view. Favor generous whitespace over dense packing; align to the spacing scale rather than arbitrary pixels.
+
+## 6. Components
+
+${componentsCss()}
+
+## 7. Motion & Interaction
+
+\`\`\`css
+${renderRootBlock(motionVars(tokens))}
+
+.btn, .card, .input { transition-duration: var(--motion-fast); }
+
+@media (prefers-reduced-motion: reduce) {
+  .btn, .card, .input { transition: none; }
+}
+\`\`\`
+
+Use \`--motion-fast\` for hovers/focus, \`--motion-normal\` for entrances, \`--motion-slow\` sparingly. Animate \`transform\`/\`opacity\`/\`filter\` — never layout properties — and always honor reduced-motion.
+
+## 8. Voice & Brand
+
+${b.name} speaks clearly and professionally: confident, concise, no hype. Prefer plain verbs over jargon, sentence case for UI labels, and active voice. The brand reads as ${summary.toLowerCase()}.
+
+## 9. Anti-patterns
+
+- Do not hardcode hex colors — always reference \`--color-*\` tokens.
+- Do not invent spacing values outside the \`--space-*\` scale.
+- Do not mix font families beyond Display / Body / Mono.
+- Do not remove \`:focus-visible\` outlines from interactive elements.
+- Do not animate layout properties or ignore \`prefers-reduced-motion\`.
+- Do not place more than one primary (\`.btn\`) action in a single view.
+`;
+}
+
+/** Manifest Open Design uses to validate + index the system. */
+export function buildManifest(b: BrandConfig): Record<string, unknown> {
+  return {
+    name: b.name,
+    slug: b.slug,
+    category: "Design Library",
+    summary: b.description ?? `${b.name} design system`,
+    version: "1.0.0",
+    generatedBy: "design-library/generate-design-md",
+    sourceBrand: `brands/${b.slug}.json`,
+    files: {
+      design: "DESIGN.md",
+      tokens: "tokens.css",
+    },
+  };
+}
+
+/** Assemble all three artifacts for one brand. */
+export function buildDesignSystem(
+  b: BrandConfig,
+  tokens: TokenFile,
+): DesignSystemBundle {
+  return {
+    slug: b.slug,
+    designMd: buildDesignMd(b, tokens),
+    tokensCss: buildTokensCss(b, tokens),
+    manifest: buildManifest(b),
+  };
+}
+
+// ---------------------------------------------------------------------------
+// CLI — read brands + tokens from disk, write bundles to the out dir
+// ---------------------------------------------------------------------------
+
+async function readJson<T>(absPath: string): Promise<T> {
+  return JSON.parse(await readFile(absPath, "utf-8")) as T;
+}
+
+function resolveOutDir(): string {
+  const fromEnv = process.env.OD_DESIGN_SYSTEMS_DIR;
+  if (fromEnv && fromEnv.trim().length > 0) {
+    return resolve(fromEnv.replace(/^~(?=$|\/)/, process.env.HOME ?? "~"));
+  }
+  return resolve(ROOT, "open-design-export/design-systems");
+}
+
+async function main(): Promise<void> {
+  const brandsDir = resolve(ROOT, "brands");
+  const tokens = await readJson<TokenFile>(
+    resolve(ROOT, "design-tokens/tokens.json"),
+  );
+
+  const files = (await readdir(brandsDir)).filter((f) => f.endsWith(".json"));
+  if (files.length === 0) {
+    throw new Error(`No brand configs found in ${brandsDir}`);
+  }
+
+  const outDir = resolveOutDir();
+  await mkdir(outDir, { recursive: true });
+
+  for (const file of files) {
+    const brand = await readJson<BrandConfig>(join(brandsDir, file));
+    const bundle = buildDesignSystem(brand, tokens);
+    const dir = join(outDir, bundle.slug);
+    await mkdir(dir, { recursive: true });
+    await writeFile(join(dir, "DESIGN.md"), bundle.designMd, "utf-8");
+    await writeFile(join(dir, "tokens.css"), bundle.tokensCss, "utf-8");
+    await writeFile(
+      join(dir, "manifest.json"),
+      JSON.stringify(bundle.manifest, null, 2) + "\n",
+      "utf-8",
+    );
+    console.log(`Exported ${bundle.slug} → ${dir}`);
+  }
+
+  console.log(`\nDone. ${files.length} design system(s) written to ${outDir}`);
+}
+
+const isDirectRun =
+  process.argv[1] && resolve(process.argv[1]) === resolve(__filename);
+
+if (isDirectRun) {
+  main().catch((err: unknown) => {
+    console.error(err);
+    process.exit(1);
+  });
+}

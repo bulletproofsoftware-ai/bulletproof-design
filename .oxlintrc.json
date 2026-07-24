@@ -1,0 +1,4 @@
+{
+  "$schema": "https://raw.githubusercontent.com/nicolo-ribaudo/oxlint-config/main/config.schema.json",
+  "ignorePatterns": ["next-env.d.ts"]
+}

@@ -1,0 +1,16 @@
+# gitleaks config for bulletproof-design.
+# Allowlists documentation curl examples (localhost API calls in migration/deployment
+# guides). No real secrets present.
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Doc curl examples (no real secrets)"
+paths = [
+  '''docs/.*\.md$''',
+  '''README\.md$''',
+]
+regexes = [
+  '''curl .*(localhost|example\.com|127\.0\.0\.1)''',
+]

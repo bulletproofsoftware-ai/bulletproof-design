@@ -18,7 +18,7 @@ Open <http://localhost:8095>. The Next.js app fetches from the API at `localhost
 ### Docker (Single Container)
 
 ```bash
-docker compose up --build
+docker build -t bulletproof-design . && docker run -p 8095:8095 -p 8096:8096 bulletproof-design
 ```
 
 Both services start via supervisord. Ports: 8095 (Next.js), 8096 (API).
@@ -61,7 +61,7 @@ npm run icons:sync
 # Automatic migration (flat JSON → directories):
 npm run brands:migrate
 
-# Manual: See MIGRATION-GUIDE.md
+# Manual: See [docs/MIGRATION-GUIDE.md](docs/MIGRATION-GUIDE.md)
 ```
 
 ## Feature Flags
@@ -85,7 +85,7 @@ Icons live under `icons/material-symbols/{outlined,rounded,sharp}/`. Each style 
 
 ```bash
 # From inside the container
-docker compose exec design npm run icons:sync
+docker exec <container> npm run icons:sync
 
 # From the host (set GITHUB_TOKEN to raise rate limits)
 GITHUB_TOKEN=$(gh auth token) npm run icons:sync
@@ -184,7 +184,7 @@ npm run sbom:generate     # Generate CycloneDX SBOM for supply chain audit
 
 ## Support & Contributing
 
-See `CONTRIBUTING.md` for contribution guidelines.
+Contributions welcome — please open an issue or PR.
 
 ## License
 

@@ -539,9 +539,20 @@ function BrandColorEditor({ brand }: { brand: BrandState }) {
     try {
       const controller = new AbortController();
       const timeout = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+      // Writes require x-api-key whenever DESIGN_API_KEY is set on the API,
+      // and always in production. The key is stored by the brand editor.
+      const headers: Record<string, string> = { "Content-Type": "application/json" };
+      let storedKey = "";
+      try {
+        storedKey = window.localStorage.getItem("design-api-key") ?? "";
+      } catch {
+        /* localStorage unavailable */
+      }
+      if (storedKey) headers["x-api-key"] = storedKey;
+
       const res = await fetch(`${API}/api/brands/${brand.summary.slug}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers,
         body: JSON.stringify(updatedConfig),
         signal: controller.signal,
       });

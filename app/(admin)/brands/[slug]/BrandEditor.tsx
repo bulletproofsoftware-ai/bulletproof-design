@@ -97,7 +97,7 @@ export function BrandEditor({
   const saveBrand = useCallback(async () => {
     setSaveStatus({ state: "saving" });
     try {
-      await api.updateBrand(brand.slug, brand);
+      await api.updateBrand(brand.slug, brand, apiKey);
       setSaveStatus({ state: "saved" });
     } catch (err) {
       setSaveStatus({

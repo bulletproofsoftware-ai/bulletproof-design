@@ -255,6 +255,17 @@ export default function BrandsPage() {
     }));
   }
 
+  // The API requires x-api-key for writes whenever DESIGN_API_KEY is set, and
+  // always in production. BrandEditor stores it under this key; read the same
+  // value here so saves from this page are not rejected with 401.
+  function readApiKey(): string {
+    try {
+      return window.localStorage.getItem("design-api-key") ?? "";
+    } catch {
+      return "";
+    }
+  }
+
   async function handleSave() {
     setStatus("saving");
     setError("");
@@ -262,7 +273,7 @@ export default function BrandsPage() {
       if (mode === "new") {
         await api.createBrand(brand);
       } else {
-        await api.updateBrand(brand.slug, brand);
+        await api.updateBrand(brand.slug, brand, readApiKey());
       }
       setStatus("saved");
       await loadBrands();
@@ -275,7 +286,7 @@ export default function BrandsPage() {
   async function handleDelete() {
     if (!confirm(`Delete brand "${brand.name}"?`)) return;
     try {
-      await api.deleteBrand(brand.slug);
+      await api.deleteBrand(brand.slug, readApiKey());
       setSheetOpen(false);
       await loadBrands();
     } catch (err: any) {

@@ -225,12 +225,17 @@ export async function createBrand(brand: BrandConfig): Promise<any> {
 
 export async function updateBrand(
   slug: string,
-  brand: BrandConfig
+  brand: BrandConfig,
+  apiKey?: string
 ): Promise<any> {
   try {
+    const headers: Record<string, string> = { "Content-Type": "application/json" };
+    // The API requires x-api-key for writes whenever DESIGN_API_KEY is set,
+    // and always in production. Without this the save 401s every time.
+    if (apiKey) headers["x-api-key"] = apiKey;
     const res = await fetch(`${API_BASE}/api/brands/${slug}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      headers,
       body: JSON.stringify(brand),
     });
     if (!res.ok) throw new Error(await parseApiError(res, "Failed to update brand"));
@@ -240,10 +245,13 @@ export async function updateBrand(
   }
 }
 
-export async function deleteBrand(slug: string): Promise<any> {
+export async function deleteBrand(slug: string, apiKey?: string): Promise<any> {
   try {
+    const headers: Record<string, string> = {};
+    if (apiKey) headers["x-api-key"] = apiKey;
     const res = await fetch(`${API_BASE}/api/brands/${slug}`, {
       method: "DELETE",
+      headers,
     });
     if (!res.ok) throw new Error(await parseApiError(res, "Failed to delete brand"));
     return await res.json();

@@ -2,6 +2,10 @@
 
 A self-hosted brand and design asset library. Next.js 15 UI (port 8095) + standalone Express API (port 8096), both run by supervisord inside a single Docker container.
 
+![bulletproof-design — overview](docs/media/infographic.png)
+
+> 📚 Full documentation in [`docs/`](docs/) · 🔒 security scan in [`docs/scan/scan-report.md`](docs/scan/scan-report.md) · 🎬 System overview: [briefing](media/system-overview.md).
+
 ## Quick Start
 
 ### Local Development (Two Processes)

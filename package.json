@@ -81,7 +81,7 @@
     "glob": "^11.1.0",
     "gray-matter": "4.0.3",
     "helmet": "^8.1.0",
-    "lucide-react": "^0.510.0",
+    "lucide-react": "^1.27.0",
     "markdown-it": "14.3.0",
     "multer": "2.2.0",
     "next": "^15.5.15",

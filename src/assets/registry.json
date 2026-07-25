@@ -1,6 +1,19 @@
 {
   "assets": [
     {
+      "name": "bulletproof-mark",
+      "file": "brands/bulletproof/mark.svg",
+      "category": "brand",
+      "format": "svg",
+      "size": "353B",
+      "tags": [
+        "brand",
+        "mark",
+        "logo"
+      ],
+      "usage": "Generic shield brand mark (currentColor; recolor via CSS)"
+    },
+    {
       "name": "avatar-placeholder",
       "file": "templates/avatar-placeholder.svg",
       "category": "placeholder",
@@ -12,58 +25,6 @@
         "fallback"
       ],
       "usage": "Default avatar when user has no profile image"
-    },
-    {
-      "name": "card-image-placeholder",
-      "file": "templates/card-image-placeholder.svg",
-      "category": "placeholder",
-      "format": "svg",
-      "size": "391B",
-      "tags": [
-        "card",
-        "image",
-        "fallback"
-      ],
-      "usage": "Default card image placeholder"
-    },
-    {
-      "name": "hero-placeholder",
-      "file": "templates/hero-placeholder.svg",
-      "category": "placeholder",
-      "format": "svg",
-      "size": "600B",
-      "tags": [
-        "hero",
-        "banner",
-        "fallback"
-      ],
-      "usage": "Default hero section placeholder"
-    },
-    {
-      "name": "logo-placeholder",
-      "file": "templates/logo-placeholder.svg",
-      "category": "placeholder",
-      "format": "svg",
-      "size": "506B",
-      "tags": [
-        "logo",
-        "brand",
-        "fallback"
-      ],
-      "usage": "Default logo placeholder"
-    },
-    {
-      "name": "product-placeholder",
-      "file": "templates/product-placeholder.svg",
-      "category": "placeholder",
-      "format": "svg",
-      "size": "446B",
-      "tags": [
-        "product",
-        "image",
-        "fallback"
-      ],
-      "usage": "Default product image placeholder"
     }
   ]
 }

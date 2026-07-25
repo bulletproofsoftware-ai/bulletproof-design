@@ -22,6 +22,9 @@ components:
       role: button
       keyboard: [ Enter, Space ]
       notes: Supports asChild for custom element rendering via Radix Slot
+    guidelines:
+      when: Use for the primary or secondary action in a view. Prefer one primary button per section.
+      avoid: Do not use for navigation — use a link styled as needed instead.
 
   - name: Card
     tier: ui

@@ -1,0 +1,29 @@
+# bulletproof-design — single-container deployment (portal :8095 + asset API :8096).
+# The image runs both processes under supervisord (see supervisord.conf).
+services:
+  design:
+    build:
+      context: .
+      args:
+        # NEXT_PUBLIC_* vars are inlined into the client bundle at build time —
+        # the runtime environment block below cannot supply them (see Dockerfile).
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8096}
+    ports:
+      - "8095:8095"
+      - "8096:8096"
+    environment:
+      - CORS_ORIGIN=${CORS_ORIGIN:-http://localhost:8095}
+      # Required in production — API key for write operations.
+      - DESIGN_API_KEY=${DESIGN_API_KEY:-}
+      # Feature flags (REQ-055 / REQ-080). 0 = enabled, 1 = disabled.
+      - DISABLE_PORTAL=${DISABLE_PORTAL:-0}
+      - DISABLE_ICONS=${DISABLE_ICONS:-0}
+      - DISABLE_ENRICHED_COMPONENTS=${DISABLE_ENRICHED_COMPONENTS:-0}
+      # REQ-093 — portal pages emit noindex,nofollow unless PORTAL_INDEX=1.
+      - PORTAL_INDEX=${PORTAL_INDEX:-}
+    volumes:
+      - ./brands:/app/brands
+      - ./assets:/app/assets
+      - ./templates:/app/templates
+      - ./icons:/app/icons
+    restart: unless-stopped

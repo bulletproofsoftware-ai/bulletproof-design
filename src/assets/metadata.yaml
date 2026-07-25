@@ -1,4 +1,11 @@
 assets:
+  # --- Brand assets ---
+  - name: bulletproof-mark
+    file: brands/bulletproof/mark.svg
+    category: brand
+    tags: [brand, mark, logo]
+    usage: Generic shield brand mark (currentColor; recolor via CSS)
+
   # --- Placeholder assets ---
   - name: avatar-placeholder
     file: templates/avatar-placeholder.svg

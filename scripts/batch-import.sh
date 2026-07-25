@@ -109,5 +109,5 @@ wait
 
 echo ""
 echo "=== IMPORT COMPLETE ==="
-find ~/Code/design/templates -name "*.tsx" | wc -l
+find "${TEMPLATES_DIR:-./templates}" -name "*.tsx" | wc -l
 echo "templates imported"

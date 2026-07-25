@@ -15,6 +15,7 @@ type Tier = (typeof TIERS)[number];
 interface PropEntry {
   name: string;
   type: string;
+  optional?: boolean;
   default?: string;
   description?: string;
 }
@@ -28,6 +29,10 @@ interface MetaEntry {
     role?: string;
     keyboard?: string[];
     notes?: string;
+  };
+  guidelines?: {
+    when?: string;
+    avoid?: string;
   };
 }
 
@@ -45,6 +50,10 @@ interface ComponentEntry {
     role?: string;
     keyboard?: string[];
     notes?: string;
+  };
+  guidelines?: {
+    when?: string;
+    avoid?: string;
   };
   incomplete?: boolean;
 }
@@ -67,10 +76,30 @@ function extractProps(content: string): PropEntry[] {
     let propMatch: RegExpExecArray | null;
     while ((propMatch = propRegex.exec(body)) !== null) {
       const propName = propMatch[1];
+      const isOptional = propMatch[2] === "?";
       let propType = propMatch[3].trim();
       // Clean up multiline types
       propType = propType.replace(/\s+/g, " ");
-      props.push({ name: propName, type: propType });
+      const entry: PropEntry = { name: propName, type: propType };
+      if (isOptional) entry.optional = true;
+      props.push(entry);
+    }
+  }
+
+  // Destructured parameter defaults, e.g.
+  //   export function TagInput({ tags, onChange, placeholder = "Add tag..." }: TagInputProps)
+  // The raw default expression text (including quotes) is captured.
+  const destructureRegex = /function\s+\w+\s*\(\s*\{([\s\S]*?)\}\s*:/;
+  const destructureMatch = destructureRegex.exec(content);
+  if (destructureMatch) {
+    const paramBody = destructureMatch[1];
+    const defaultRegex = /(\w+)\s*=\s*("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|[^,}]+)/g;
+    let defMatch: RegExpExecArray | null;
+    while ((defMatch = defaultRegex.exec(paramBody)) !== null) {
+      const prop = props.find((p) => p.name === defMatch![1]);
+      if (prop && prop.default === undefined) {
+        prop.default = defMatch[2].trim().replace(/'/g, '"');
+      }
     }
   }
 
@@ -233,6 +262,7 @@ async function main(): Promise<void> {
       if (dependencies.length > 0) entry.dependencies = dependencies;
       if (meta?.examples) entry.examples = meta.examples;
       if (meta?.accessibility) entry.accessibility = meta.accessibility;
+      if (meta?.guidelines) entry.guidelines = meta.guidelines;
       if (!meta) entry.incomplete = true;
 
       components.push(entry);

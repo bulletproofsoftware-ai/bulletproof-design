@@ -1,5 +1,10 @@
 # Design System Build-Out — PRD
 
+> **Internal planning document.** This is the historical build-out plan for the
+> design system, kept for provenance. It describes internal phases and
+> decisions, not the current usage documentation — see the README and
+> `docs/ARCHITECTURE.md` for how to use the library.
+
 **Date:** 2026-04-03
 **Status:** Approved
 **Approach:** Foundation-Up (7 phases, sequential with CI running in parallel from Phase 1)

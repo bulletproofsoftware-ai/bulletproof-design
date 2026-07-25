@@ -21,7 +21,8 @@
     "sbom:generate": "syft design-library:latest -o cyclonedx-json > sbom.cdx.json",
     "test": "node --experimental-vm-modules node_modules/.bin/jest --forceExit",
     "lint": "eslint .",
-    "prepare": "husky"
+    "prepare": "husky",
+    "pretest": "npm run generate:tokens"
   },
   "lint-staged": {
     "*.{ts,tsx}": [

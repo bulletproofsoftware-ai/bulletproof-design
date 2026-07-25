@@ -7,7 +7,7 @@ A self-hosted brand and design asset library. Next.js 15 UI (port 8095) + standa
 ### Local Development (Two Processes)
 
 ```bash
-npm install
+npm ci --legacy-peer-deps   # legacy peer deps: eslint@10 peer conflict in the lockfile
 npm run dev        # Next.js on :8095 (auto-generates design tokens first)
 # In another terminal:
 npm run api        # Express API on :8096
@@ -154,10 +154,15 @@ The `audit:check` gate also runs inside the Docker image build — `docker compo
 npm run dev               # Next.js on :8095
 npm run api               # Express API on :8096
 npm run build             # Production Next.js build
-npm test                  # Jest (ESM)
+npm test                  # Jest (ESM); design tokens are generated first (pretest)
 npm run lint              # ESLint with layered import boundaries
 npm run typecheck         # tsc --noEmit
 ```
+
+> **Running the API integration tests:** `__tests__/api.test.ts` and
+> `__tests__/api-routes.test.ts` exercise a live API server and are skipped by
+> default. Start the API (`npm run api`), then run them with
+> `RUN_API_TESTS=1 npm test`.
 
 **Generation & Maintenance:**
 ```bash

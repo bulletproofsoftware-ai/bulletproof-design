@@ -1,6 +1,13 @@
+/**
+ * Stack-dependent integration suite: requires the asset API server running on
+ * localhost:8096 (`npm run api`). Gated behind RUN_API_TESTS=1 — see README
+ * "Running the API integration tests".
+ */
+const describeApi = process.env.RUN_API_TESTS === "1" ? describe : describe.skip;
+
 const API = "http://localhost:8096";
 
-describe("Design Library API", () => {
+describeApi("Design Library API", () => {
   // ─── Health ────────────────────────────────────
   describe("GET /api/health", () => {
     test("returns ok status", async () => {

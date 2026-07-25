@@ -13,7 +13,7 @@
  *
  * Output dir defaults to `open-design-export/design-systems/` and is
  * overridable so it can write straight into an Open Design checkout:
- *   OD_DESIGN_SYSTEMS_DIR=~/Code/open-design/design-systems npm run generate:design-md
+ *   OD_DESIGN_SYSTEMS_DIR=/path/to/open-design/design-systems npm run generate:design-md
  *
  * Run: npx tsx scripts/generate-design-md.ts
  */

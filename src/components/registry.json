@@ -80,6 +80,10 @@
           "Space"
         ],
         "notes": "Supports asChild for custom element rendering via Radix Slot"
+      },
+      "guidelines": {
+        "when": "Use for the primary or secondary action in a view. Prefer one primary button per section.",
+        "avoid": "Do not use for navigation — use a link styled as needed instead."
       }
     },
     {
@@ -416,15 +420,21 @@
         },
         {
           "name": "confirmLabel",
-          "type": "string"
+          "type": "string",
+          "optional": true,
+          "default": "\"Confirm\""
         },
         {
           "name": "cancelLabel",
-          "type": "string"
+          "type": "string",
+          "optional": true,
+          "default": "\"Cancel\""
         },
         {
           "name": "variant",
-          "type": "\"default\" | \"destructive\""
+          "type": "\"default\" | \"destructive\"",
+          "optional": true,
+          "default": "\"default\""
         },
         {
           "name": "onConfirm",
@@ -468,7 +478,9 @@
         },
         {
           "name": "filter",
-          "type": "\"all\" | \"sans\" | \"serif\" | \"mono\""
+          "type": "\"all\" | \"sans\" | \"serif\" | \"mono\"",
+          "optional": true,
+          "default": "\"all\""
         }
       ],
       "dependencies": [
@@ -507,7 +519,9 @@
         },
         {
           "name": "iconSize",
-          "type": "number"
+          "type": "number",
+          "optional": true,
+          "default": "16"
         }
       ],
       "dependencies": [
@@ -546,7 +560,9 @@
         },
         {
           "name": "placeholder",
-          "type": "string"
+          "type": "string",
+          "optional": true,
+          "default": "\"Add tag...\""
         }
       ],
       "dependencies": [
@@ -592,7 +608,8 @@
         },
         {
           "name": "onClick",
-          "type": "() => void"
+          "type": "() => void",
+          "optional": true
         }
       ],
       "dependencies": [
@@ -625,19 +642,23 @@
         },
         {
           "name": "description",
-          "type": "string"
+          "type": "string",
+          "optional": true
         },
         {
           "name": "primaryColor",
-          "type": "string"
+          "type": "string",
+          "optional": true
         },
         {
           "name": "brand",
-          "type": "Pick<BrandConfig, \"colors\">"
+          "type": "Pick<BrandConfig, \"colors\">",
+          "optional": true
         },
         {
           "name": "onClick",
-          "type": "() => void"
+          "type": "() => void",
+          "optional": true
         }
       ],
       "examples": [
@@ -697,7 +718,8 @@
         },
         {
           "name": "rgb",
-          "type": "[number, number, number]"
+          "type": "[number, number, number]",
+          "optional": true
         }
       ],
       "dependencies": [
@@ -747,7 +769,8 @@
         },
         {
           "name": "initialCode",
-          "type": "string"
+          "type": "string",
+          "optional": true
         }
       ],
       "dependencies": [
@@ -803,7 +826,8 @@
         },
         {
           "name": "className",
-          "type": "string"
+          "type": "string",
+          "optional": true
         }
       ],
       "dependencies": [
@@ -841,11 +865,13 @@
         },
         {
           "name": "preferred",
-          "type": "boolean"
+          "type": "boolean",
+          "optional": true
         },
         {
           "name": "downloadName",
-          "type": "string"
+          "type": "string",
+          "optional": true
         }
       ],
       "dependencies": [
@@ -878,11 +904,15 @@
         },
         {
           "name": "language",
-          "type": "string"
+          "type": "string",
+          "optional": true,
+          "default": "\"typescript\""
         },
         {
           "name": "height",
-          "type": "string"
+          "type": "string",
+          "optional": true,
+          "default": "\"100%\""
         }
       ],
       "dependencies": [
@@ -967,18 +997,22 @@
         },
         {
           "name": "brandInitial",
-          "type": "string"
+          "type": "string",
+          "optional": true
         },
         {
           "name": "brandInitialColor",
-          "type": "string"
+          "type": "string",
+          "optional": true
         },
         {
           "name": "extraSections",
-          "type": "Array<{ title: string"
+          "type": "Array<{ title: string",
+          "optional": true
         }
       ],
       "dependencies": [
+        "lucide-react",
         "next"
       ],
       "examples": [
@@ -998,36 +1032,6 @@
       }
     },
     {
-      "name": "PortalTopNav",
-      "tier": "features",
-      "path": "components/features/PortalTopNav/PortalTopNav.tsx",
-      "client": false,
-      "description": "Top-level navigation bar for brand portal pages with Design Library section links and active-state indicator",
-      "props": [
-        {
-          "name": "activeSection",
-          "type": "PortalTopNavSection"
-        }
-      ],
-      "dependencies": [
-        "next"
-      ],
-      "examples": [
-        {
-          "label": "Brands section active",
-          "code": "<PortalTopNav activeSection=\"brands\" />"
-        }
-      ],
-      "accessibility": {
-        "role": "banner",
-        "keyboard": [
-          "Tab",
-          "Enter"
-        ],
-        "notes": "Uses aria-current=\"page\" on the active link; nav is labelled \"Design Library sections\""
-      }
-    },
-    {
       "name": "SanitisedHtml",
       "tier": "features",
       "path": "components/features/SanitisedHtml/SanitisedHtml.tsx",
@@ -1040,7 +1044,8 @@
         },
         {
           "name": "className",
-          "type": "string"
+          "type": "string",
+          "optional": true
         }
       ],
       "dependencies": [
@@ -1134,7 +1139,8 @@
         },
         {
           "name": "description",
-          "type": "string"
+          "type": "string",
+          "optional": true
         },
         {
           "name": "category",
@@ -1142,15 +1148,19 @@
         },
         {
           "name": "tags",
-          "type": "string[]"
+          "type": "string[]",
+          "optional": true,
+          "default": "[]"
         },
         {
           "name": "onClick",
-          "type": "() => void"
+          "type": "() => void",
+          "optional": true
         },
         {
           "name": "className",
-          "type": "string"
+          "type": "string",
+          "optional": true
         }
       ],
       "examples": [

@@ -1,4 +1,11 @@
 /**
+ * Stack-dependent integration suite: requires the asset API server running on
+ * localhost:8096 (`npm run api`). Gated behind RUN_API_TESTS=1 — see README
+ * "Running the API integration tests".
+ */
+const describeApi = process.env.RUN_API_TESTS === "1" ? describe : describe.skip;
+
+/**
  * API Route Integration Tests
  *
  * Supplements api.test.ts with additional coverage for all route files:
@@ -56,7 +63,7 @@ async function safeJson(res: Response): Promise<any | null> {
 // ─────────────────────────────────────────────────────────────────────────────
 // Server-level endpoints (src/api/server.ts)
 // ─────────────────────────────────────────────────────────────────────────────
-describe("Server endpoints", () => {
+describeApi("Server endpoints", () => {
   test("GET /api/health returns required fields", async () => {
     if (!serverAvailable) return;
     const res = await apiFetch("/api/health");
@@ -142,7 +149,7 @@ describe("Server endpoints", () => {
 // ─────────────────────────────────────────────────────────────────────────────
 // Templates (src/api/routes/templates.ts)
 // ─────────────────────────────────────────────────────────────────────────────
-describe("Templates routes", () => {
+describeApi("Templates routes", () => {
   test("GET /api/templates/:category returns templates array", async () => {
     if (!serverAvailable) return;
     const catRes = await apiFetch("/api/categories");
@@ -280,7 +287,7 @@ describe("Templates routes", () => {
 // ─────────────────────────────────────────────────────────────────────────────
 // Brands (src/api/routes/brands.ts)
 // ─────────────────────────────────────────────────────────────────────────────
-describe("Brands routes", () => {
+describeApi("Brands routes", () => {
   let validSlug: string | null = null;
   let brandsEndpointAvailable = false;
 
@@ -444,7 +451,7 @@ describe("Brands routes", () => {
 // ─────────────────────────────────────────────────────────────────────────────
 // Assets (src/api/routes/assets.ts)
 // ─────────────────────────────────────────────────────────────────────────────
-describe("Assets routes", () => {
+describeApi("Assets routes", () => {
   test("GET /api/assets returns assets array with URLs", async () => {
     if (!serverAvailable) return;
     const res = await apiFetch("/api/assets");
@@ -533,7 +540,7 @@ describe("Assets routes", () => {
 // ─────────────────────────────────────────────────────────────────────────────
 // Preview (src/api/routes/preview.ts — mounted on server.ts)
 // ─────────────────────────────────────────────────────────────────────────────
-describe("Preview routes", () => {
+describeApi("Preview routes", () => {
   test("GET /preview/:category/:name returns HTML for valid template", async () => {
     if (!serverAvailable) return;
     const catRes = await apiFetch("/api/categories");
@@ -566,7 +573,7 @@ describe("Preview routes", () => {
 // ─────────────────────────────────────────────────────────────────────────────
 // Input validation across routes
 // ─────────────────────────────────────────────────────────────────────────────
-describe("Input validation", () => {
+describeApi("Input validation", () => {
   test("template category rejects special characters", async () => {
     if (!serverAvailable) return;
     const res = await apiFetch("/api/templates/cat%00egory");

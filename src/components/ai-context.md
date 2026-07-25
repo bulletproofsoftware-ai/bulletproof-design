@@ -138,8 +138,6 @@
 - **PortalSidebar** — Collapsible sidebar for brand portal layouts with section groups and active-route highlighting
   - Props: `slug: string`, `brandName: string`, `brandInitial: string`, `brandInitialColor: string`, `extraSections: Array<{ title: string`
   - Client component ("use client")
-- **PortalTopNav** — Top-level navigation bar for brand portal pages with Design Library section links and active-state indicator
-  - Props: `activeSection: PortalTopNavSection`
 - **SanitisedHtml** — Server component that renders pre-sanitised HTML (already run through sanitize-html)
   - Props: `html: string`, `className: string`
 - **SearchCommand** — Command palette for searching templates and brands with Cmd+K shortcut
@@ -158,12 +156,11 @@ None yet.
 
 ## Asset Inventory
 
+### brand
+- **bulletproof-mark** — Generic shield brand mark (currentColor; recolor via CSS) (svg, 353B)
+
 ### placeholder
 - **avatar-placeholder** — Default avatar when user has no profile image (svg, 293B)
-- **card-image-placeholder** — Default card image placeholder (svg, 391B)
-- **hero-placeholder** — Default hero section placeholder (svg, 600B)
-- **logo-placeholder** — Default logo placeholder (svg, 506B)
-- **product-placeholder** — Default product image placeholder (svg, 446B)
 
 
 ## Import Rules
@@ -362,12 +359,6 @@ None yet.
 **Brand portal sidebar:**
 ```tsx
 <PortalSidebar slug="acme" brandName="Acme Corp" brandInitial="A" brandInitialColor="#0057B8" />
-```
-
-### PortalTopNav
-**Brands section active:**
-```tsx
-<PortalTopNav activeSection="brands" />
 ```
 
 ### SanitisedHtml

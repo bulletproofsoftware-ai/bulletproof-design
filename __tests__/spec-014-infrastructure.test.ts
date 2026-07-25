@@ -111,12 +111,16 @@ describe("SPEC-014 / REQ-086 (F-CSP-01) — Production CSP hardening", () => {
     expect(prodScriptSrcMatch![0]).not.toMatch(/'unsafe-eval'/);
   });
 
-  test("CSP still allows Express API cross-origin (connect-src includes :8096)", () => {
-    expect(middleware).toMatch(/connect-src[^`]*http:\/\/localhost:8096/);
+  test("CSP still allows Express API cross-origin (connect-src includes the API origin, default :8096)", () => {
+    // The API origin is a variable (NEXT_PUBLIC_API_URL) defaulting to :8096.
+    expect(middleware).toMatch(
+      /apiOrigin = process\.env\.NEXT_PUBLIC_API_URL \|\| "http:\/\/localhost:8096"/,
+    );
+    expect(middleware).toMatch(/connect-src 'self' \$\{apiOrigin\}/);
   });
 
-  test("CSP still allows iframe preview from :8096 (frame-src)", () => {
-    expect(middleware).toMatch(/frame-src[^`]*http:\/\/localhost:8096/);
+  test("CSP still allows iframe preview from the API origin (frame-src)", () => {
+    expect(middleware).toMatch(/frame-src 'self' \$\{apiOrigin\}/);
   });
 
   test("CSP allows img-src data: (inline SVG / data URIs)", () => {

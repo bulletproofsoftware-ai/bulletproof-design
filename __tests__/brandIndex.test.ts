@@ -20,7 +20,7 @@ import {
   BrandColors,
 } from "../src/api/lib/brandIndex";
 
-const TMP_DIR = path.join(os.tmpdir(), "design-lib-brand-test");
+const TMP_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "design-lib-brand-test-"));
 
 const SAMPLE_BRAND = {
   name: "Test Brand",

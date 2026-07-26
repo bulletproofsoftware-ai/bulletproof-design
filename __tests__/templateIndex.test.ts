@@ -7,7 +7,7 @@ import * as path from "path";
 import * as os from "os";
 import { buildIndex, getTemplates, getCategories, getByCategory, getByName, search } from "../src/api/lib/templateIndex";
 
-const TMP_DIR = path.join(os.tmpdir(), "design-lib-index-test");
+const TMP_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "design-lib-index-test-"));
 
 function writeTemplate(category: string, name: string, description = "", tags: string[] = []) {
   const dir = path.join(TMP_DIR, category);

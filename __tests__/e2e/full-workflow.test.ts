@@ -47,10 +47,7 @@ import {
 // Fixtures
 // ────────────────────────────────────────────────────────────────────────
 
-const TMP = path.join(
-  os.tmpdir(),
-  "design-lib-e2e-full-workflow-" + Date.now(),
-);
+const TMP = fs.mkdtempSync(fs.mkdtempSync(path.join(os.tmpdir(), "design-lib-e2e-full-workflow-")));
 
 const API_KEY = `test-${randomBytes(12).toString("hex")}`;
 

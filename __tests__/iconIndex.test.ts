@@ -51,7 +51,7 @@ const FIXTURE_METADATA = {
 };
 
 beforeAll(async () => {
-  TMP_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "icon-index-test-"));
+  TMP_DIR = fs.mkdtempSync(fs.mkdtempSync(path.join(os.tmpdir(), "icon-index-test-")));
   fs.mkdirSync(path.join(TMP_DIR, "outlined"), { recursive: true });
   fs.mkdirSync(path.join(TMP_DIR, "rounded"), { recursive: true });
   fs.mkdirSync(path.join(TMP_DIR, "sharp"), { recursive: true });
@@ -308,7 +308,7 @@ describe("reload", () => {
 
 describe("missing metadata — fail-open", () => {
   test("loads to an empty index when metadata.json absent", async () => {
-    const empty = fs.mkdtempSync(path.join(os.tmpdir(), "icon-empty-"));
+    const empty = fs.mkdtempSync(fs.mkdtempSync(path.join(os.tmpdir(), "icon-empty-")));
     try {
       const idx = await loadIconIndex(empty);
       expect(idx.all()).toEqual([]);

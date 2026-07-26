@@ -19,10 +19,7 @@ import * as path from "node:path";
 import brandsRouter from "../src/api/routes/brands";
 import { buildBrandIndex, closeWatcher } from "../src/api/lib/brandIndex";
 
-const TMP_ROOT = path.join(
-  os.tmpdir(),
-  "design-lib-guidelines-api-" + Date.now(),
-);
+const TMP_ROOT = fs.mkdtempSync(fs.mkdtempSync(path.join(os.tmpdir(), "design-lib-guidelines-api-")));
 
 // Per-run random API key so no literal secret material sits in the source.
 const API_KEY = `test-${randomBytes(16).toString("hex")}`;

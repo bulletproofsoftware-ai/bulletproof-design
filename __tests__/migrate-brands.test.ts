@@ -15,7 +15,7 @@ import * as os from "os";
 import { run, parseArgs, scanCandidates, DEFAULT_GUIDELINES } from "../scripts/migrate-brands";
 
 function freshTmp(tag: string): string {
-  const dir = path.join(os.tmpdir(), `design-lib-migrate-${tag}-${Date.now()}-${Math.random().toString(36).slice(2)}`);
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), `design-lib-migrate-${tag}-`));
   fs.mkdirSync(dir, { recursive: true });
   return dir;
 }

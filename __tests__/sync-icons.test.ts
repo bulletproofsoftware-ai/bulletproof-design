@@ -24,7 +24,7 @@ import {
 let TMP_ROOT: string;
 
 beforeAll(() => {
-  TMP_ROOT = fs.mkdtempSync(path.join(os.tmpdir(), "sync-icons-test-"));
+  TMP_ROOT = fs.mkdtempSync(fs.mkdtempSync(path.join(os.tmpdir(), "sync-icons-test-")));
   // Seed a minimal category-map.json
   fs.writeFileSync(
     path.join(TMP_ROOT, "category-map.json"),
@@ -105,7 +105,7 @@ describe("loadCategoryMap", () => {
   });
 
   test("throws when category-map.json is missing", () => {
-    const empty = fs.mkdtempSync(path.join(os.tmpdir(), "no-cat-map-"));
+    const empty = fs.mkdtempSync(fs.mkdtempSync(path.join(os.tmpdir(), "no-cat-map-")));
     try {
       expect(() => loadCategoryMap(empty)).toThrow(/category-map\.json missing/);
     } finally {
@@ -114,7 +114,7 @@ describe("loadCategoryMap", () => {
   });
 
   test("throws when category-map.json is malformed", () => {
-    const bad = fs.mkdtempSync(path.join(os.tmpdir(), "bad-cat-map-"));
+    const bad = fs.mkdtempSync(fs.mkdtempSync(path.join(os.tmpdir(), "bad-cat-map-")));
     try {
       fs.writeFileSync(path.join(bad, "category-map.json"), JSON.stringify({ other: "shape" }));
       expect(() => loadCategoryMap(bad)).toThrow(/malformed/);

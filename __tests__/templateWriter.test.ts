@@ -7,8 +7,8 @@ import * as fs from "fs";
 import * as path from "path";
 import * as os from "os";
 
-const TMP_TEMPLATES = path.join(os.tmpdir(), "design-lib-writer-templates-" + Date.now());
-const TMP_SRC = path.join(os.tmpdir(), "design-lib-writer-src-" + Date.now());
+const TMP_TEMPLATES = fs.mkdtempSync(path.join(os.tmpdir(), "design-lib-writer-templates-"));
+const TMP_SRC = fs.mkdtempSync(path.join(os.tmpdir(), "design-lib-writer-src-"));
 
 fs.mkdirSync(TMP_TEMPLATES, { recursive: true });
 fs.mkdirSync(TMP_SRC, { recursive: true });

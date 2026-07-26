@@ -23,10 +23,7 @@ import {
   closeWatcher,
 } from "../src/api/lib/brandIndex";
 
-const TMP_DIR = path.join(
-  os.tmpdir(),
-  "design-lib-brand-dir-test-" + Date.now(),
-);
+const TMP_DIR = fs.mkdtempSync(fs.mkdtempSync(path.join(os.tmpdir(), "design-lib-brand-dir-test-")));
 
 // ────────────────────────────────────────────────────────────────────────
 // Test fixtures

@@ -25,10 +25,7 @@ import { buildBrandIndex, closeWatcher } from "../src/api/lib/brandIndex";
 // Fixtures
 // ────────────────────────────────────────────────────────────────────────
 
-const TMP_ROOT = path.join(
-  os.tmpdir(),
-  "design-lib-logos-api-" + Date.now(),
-);
+const TMP_ROOT = fs.mkdtempSync(fs.mkdtempSync(path.join(os.tmpdir(), "design-lib-logos-api-")));
 
 const API_KEY = `test-${randomBytes(16).toString("hex")}`;
 

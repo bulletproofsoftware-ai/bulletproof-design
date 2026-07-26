@@ -33,10 +33,7 @@ import { buildBrandIndex, closeWatcher } from "../src/api/lib/brandIndex";
 // Fixtures — one flat brand + one directory brand, shared across tests
 // ────────────────────────────────────────────────────────────────────────
 
-const TMP_ROOT = path.join(
-  os.tmpdir(),
-  "design-lib-api-backcompat-" + Date.now(),
-);
+const TMP_ROOT = fs.mkdtempSync(fs.mkdtempSync(path.join(os.tmpdir(), "design-lib-api-backcompat-")));
 
 const FLAT_BRAND = {
   name: "Flat Brand",

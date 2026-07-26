@@ -9,10 +9,7 @@ import * as fs from "fs";
 import * as path from "path";
 import * as os from "os";
 
-const TMP_BRANDS = path.join(
-  os.tmpdir(),
-  "design-lib-brand-writer-" + Date.now(),
-);
+const TMP_BRANDS = fs.mkdtempSync(fs.mkdtempSync(path.join(os.tmpdir(), "design-lib-brand-writer-")));
 fs.mkdirSync(TMP_BRANDS, { recursive: true });
 
 // Must set env before dynamic import so the writer picks it up.

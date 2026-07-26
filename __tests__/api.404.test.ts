@@ -29,9 +29,12 @@ import {
 } from "../src/api/lib/iconIndex";
 import { __resetDefaultComponentIndexForTests } from "../src/api/lib/componentIndex";
 
-const TMP_BRANDS = path.join(os.tmpdir(), "design-lib-404-brands-" + Date.now());
-const TMP_ICONS = path.join(os.tmpdir(), "design-lib-404-icons-" + Date.now());
-const TMP_REGISTRY = path.join(os.tmpdir(), "design-lib-404-registry-" + Date.now() + ".json");
+const TMP_BRANDS = fs.mkdtempSync(path.join(os.tmpdir(), "design-lib-404-brands-"));
+const TMP_ICONS = fs.mkdtempSync(path.join(os.tmpdir(), "design-lib-404-icons-"));
+const TMP_REGISTRY = path.join(
+  fs.mkdtempSync(path.join(os.tmpdir(), "design-lib-404-registry-")),
+  "registry.json",
+);
 
 let server: Server | null = null;
 let baseUrl = "";

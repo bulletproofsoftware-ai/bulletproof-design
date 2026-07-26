@@ -53,7 +53,7 @@ const ROUNDED_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="
 const SHARP_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20"/></svg>`;
 
 beforeAll(async () => {
-  TMP_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "icons-api-test-"));
+  TMP_DIR = fs.mkdtempSync(fs.mkdtempSync(path.join(os.tmpdir(), "icons-api-test-")));
   fs.mkdirSync(path.join(TMP_DIR, "outlined"), { recursive: true });
   fs.mkdirSync(path.join(TMP_DIR, "rounded"), { recursive: true });
   fs.mkdirSync(path.join(TMP_DIR, "sharp"), { recursive: true });

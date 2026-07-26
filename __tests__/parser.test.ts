@@ -7,7 +7,7 @@ import * as path from "path";
 import * as os from "os";
 import { parseTemplate } from "../src/api/lib/parser";
 
-const TMP_DIR = path.join(os.tmpdir(), "design-lib-parser-test");
+const TMP_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "design-lib-parser-test-"));
 
 beforeAll(() => {
   fs.mkdirSync(TMP_DIR, { recursive: true });

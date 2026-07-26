@@ -20,7 +20,7 @@ import * as path from "path";
 // Fixture dirs — set env vars BEFORE importing the server module.
 // ---------------------------------------------------------------------------
 
-const TMP_ROOT = fs.mkdtempSync(path.join(os.tmpdir(), "mcp-server-test-"));
+const TMP_ROOT = fs.mkdtempSync(fs.mkdtempSync(path.join(os.tmpdir(), "mcp-server-test-")));
 const FIXTURE_BRANDS_DIR = path.join(TMP_ROOT, "brands");
 const FIXTURE_ICONS_DIR = path.join(TMP_ROOT, "icons");
 

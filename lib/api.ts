@@ -73,6 +73,32 @@ const API_BASE =
   typeof window === "undefined"
     ? process.env.INTERNAL_API_URL || "http://127.0.0.1:8096"
     : process.env.NEXT_PUBLIC_API_URL || "http://localhost:8096";
+
+/**
+ * The API requires x-api-key on every write whenever DESIGN_API_KEY is set on
+ * the server, and always in production. Individual call sites kept forgetting
+ * to pass it — brand create, template save/delete and URL import all issued
+ * unauthenticated writes that 401 in any real deployment. Reading the stored
+ * key here means a write helper cannot silently omit it.
+ *
+ * Callers may still pass an explicit key to override the stored one.
+ */
+const API_KEY_STORAGE = "design-api-key";
+
+function writeHeaders(explicitKey?: string, json = true): Record<string, string> {
+  const headers: Record<string, string> = {};
+  if (json) headers["Content-Type"] = "application/json";
+  let key = explicitKey ?? "";
+  if (!key && typeof window !== "undefined") {
+    try {
+      key = window.localStorage.getItem(API_KEY_STORAGE) ?? "";
+    } catch {
+      /* localStorage unavailable — send without a key and let the API answer */
+    }
+  }
+  if (key) headers["x-api-key"] = key;
+  return headers;
+}
 const PUBLIC_API_BASE =
   process.env.NEXT_PUBLIC_API_URL || "http://localhost:8096";
 
@@ -209,11 +235,11 @@ export async function getBrandAssets(
   }
 }
 
-export async function createBrand(brand: BrandConfig): Promise<any> {
+export async function createBrand(brand: BrandConfig, apiKey?: string): Promise<any> {
   try {
     const res = await fetch(`${API_BASE}/api/brands`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: writeHeaders(apiKey),
       body: JSON.stringify(brand),
     });
     if (!res.ok) throw new Error(await parseApiError(res, "Failed to create brand"));
@@ -229,10 +255,7 @@ export async function updateBrand(
   apiKey?: string
 ): Promise<any> {
   try {
-    const headers: Record<string, string> = { "Content-Type": "application/json" };
-    // The API requires x-api-key for writes whenever DESIGN_API_KEY is set,
-    // and always in production. Without this the save 401s every time.
-    if (apiKey) headers["x-api-key"] = apiKey;
+    const headers = writeHeaders(apiKey);
     const res = await fetch(`${API_BASE}/api/brands/${slug}`, {
       method: "PUT",
       headers,
@@ -247,8 +270,7 @@ export async function updateBrand(
 
 export async function deleteBrand(slug: string, apiKey?: string): Promise<any> {
   try {
-    const headers: Record<string, string> = {};
-    if (apiKey) headers["x-api-key"] = apiKey;
+    const headers = writeHeaders(apiKey, false);
     const res = await fetch(`${API_BASE}/api/brands/${slug}`, {
       method: "DELETE",
       headers,
@@ -330,7 +352,7 @@ export async function createTemplate(body: {
   try {
     const res = await fetch(`${API_BASE}/api/templates`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: writeHeaders(),
       body: JSON.stringify(body),
     });
     if (!res.ok) throw new Error(await parseApiError(res, "Failed to create template"));
@@ -350,7 +372,7 @@ export async function updateTemplate(
       `${API_BASE}/api/templates/${encodeURIComponent(category)}/${encodeURIComponent(name)}`,
       {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: writeHeaders(),
         body: JSON.stringify({ sourceCode }),
       }
     );
@@ -368,7 +390,7 @@ export async function deleteTemplate(
   try {
     const res = await fetch(
       `${API_BASE}/api/templates/${encodeURIComponent(category)}/${encodeURIComponent(name)}`,
-      { method: "DELETE" }
+      { method: "DELETE", headers: writeHeaders(undefined, false) }
     );
     if (!res.ok) throw new Error(await parseApiError(res, "Failed to delete template"));
     return await res.json();
@@ -402,7 +424,7 @@ export async function importFromUrl(body: {
   try {
     const res = await fetch(`${API_BASE}/api/import`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: writeHeaders(),
       body: JSON.stringify(body),
     });
     if (!res.ok) throw new Error(await parseApiError(res, "Failed to import from URL"));
@@ -461,7 +483,7 @@ export async function uploadAsset(
   try {
     const res = await fetch(`${API_BASE}/api/assets`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: writeHeaders(),
       body: JSON.stringify({ folder, filename, base64 }),
     });
     if (!res.ok) throw new Error(await parseApiError(res, "Failed to upload asset"));
@@ -475,7 +497,7 @@ export async function deleteAsset(assetPath: string): Promise<any> {
   try {
     const res = await fetch(`${API_BASE}/api/assets`, {
       method: "DELETE",
-      headers: { "Content-Type": "application/json" },
+      headers: writeHeaders(),
       body: JSON.stringify({ path: assetPath }),
     });
     if (!res.ok) throw new Error(await parseApiError(res, "Failed to delete asset"));

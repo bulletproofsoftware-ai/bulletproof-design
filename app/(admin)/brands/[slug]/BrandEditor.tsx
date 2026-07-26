@@ -97,7 +97,10 @@ export function BrandEditor({
   const saveBrand = useCallback(async () => {
     setSaveStatus({ state: "saving" });
     try {
-      await api.updateBrand(brand.slug, brand, apiKey);
+      // No explicit key: api.updateBrand reads the stored key itself, so
+      // this callback cannot capture a stale `apiKey` from an earlier render
+      // (the dependency array intentionally tracks only `brand`).
+      await api.updateBrand(brand.slug, brand);
       setSaveStatus({ state: "saved" });
     } catch (err) {
       setSaveStatus({

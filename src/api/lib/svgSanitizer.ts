@@ -265,19 +265,39 @@ function postPassScrub(input: string): string {
   // parser normalises most of these, but SVG namespaced forms like
   // `<svg:script>` or weird whitespace (`<script\t>`) can slip through fragment
   // mode. Remove the entire element.
-  out = out.replace(
+  // Each of these runs to a fixpoint. A single pass is defeatable by nesting the
+  // very token being removed: `<scr<script>ipt>` becomes `<script>` *after* one
+  // replacement, and `<!-<!-- ->-->` reassembles a comment the same way. Repeating
+  // until the string stops changing removes that class of bypass entirely.
+  // (CodeQL js/incomplete-multi-character-sanitization.)
+  out = replaceToFixpoint(out, [
+    // Namespaced or oddly-cased <script>...</script>, whole element.
     /<\s*(?:[a-zA-Z][\w-]*:)?script\b[\s\S]*?<\s*\/\s*(?:[a-zA-Z][\w-]*:)?script\s*>/gi,
-    "",
-  );
-  // Self-closing / malformed <script> with no matching close.
-  out = out.replace(/<\s*(?:[a-zA-Z][\w-]*:)?script\b[^>]*>/gi, "");
+    // Self-closing / malformed <script> with no matching close.
+    /<\s*(?:[a-zA-Z][\w-]*:)?script\b[^>]*>/gi,
+    // Residual `on*=...` regardless of case/whitespace:
+    // `onclick="..."`, `ON LOAD = '...'`, `onbegin=foo`.
+    /\s+on[a-z][a-z0-9_-]*\s*=\s*"[^"]*"/gi,
+    /\s+on[a-z][a-z0-9_-]*\s*=\s*'[^']*'/gi,
+    /\s+on[a-z][a-z0-9_-]*\s*=\s*[^\s>]+/gi,
+  ]);
 
-  // Strip any residual `on*=...` attribute regardless of case/whitespace.
-  // Matches `onclick="..."`, `ON LOAD = '...'`, `onbegin=foo`, etc.
-  out = out.replace(/\s+on[a-z][a-z0-9_-]*\s*=\s*"[^"]*"/gi, "");
-  out = out.replace(/\s+on[a-z][a-z0-9_-]*\s*=\s*'[^']*'/gi, "");
-  out = out.replace(/\s+on[a-z][a-z0-9_-]*\s*=\s*[^\s>]+/gi, "");
+  return out;
+}
 
+/**
+ * Apply every pattern repeatedly until a full round changes nothing.
+ *
+ * Bounded so a pathological input cannot spin: each round must shorten the
+ * string (every pattern here only ever deletes), so the bound is generous.
+ */
+function replaceToFixpoint(input: string, patterns: RegExp[]): string {
+  let out = input;
+  for (let round = 0; round < 20; round++) {
+    const before = out;
+    for (const re of patterns) out = out.replace(re, "");
+    if (out === before) break;
+  }
   return out;
 }
 

@@ -3,6 +3,11 @@
  * localhost:8096 (`npm run api`). Gated behind RUN_API_TESTS=1 — see README
  * "Running the API integration tests".
  */
+// `export {}` makes this file a module. Without it TypeScript treats it as a
+// global script, and the identical `describeApi` in the sibling suite collides
+// (TS2451: Cannot redeclare block-scoped variable).
+export {};
+
 const describeApi = process.env.RUN_API_TESTS === "1" ? describe : describe.skip;
 
 const API = "http://localhost:8096";

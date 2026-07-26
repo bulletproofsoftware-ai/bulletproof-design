@@ -186,7 +186,20 @@ app.use("/assets", (_req, res, next) => {
 // MIME/filename validation. Lives outside `/api` so CORS/auth gates above
 // do not apply — it is a read-only asset endpoint intended for direct
 // browser consumption.
-app.use("/brand-assets", brandAssetsStaticRouter);
+//
+// Being outside `/api` also placed it outside the read/write limiters mounted
+// there, so it was the one unauthenticated, unthrottled route on the server —
+// and it hits the disk and runs SVG sanitisation per request
+// (CodeQL js/missing-rate-limiting). It gets its own limiter, more generous
+// than the API read limit because a single page legitimately pulls many assets.
+const assetLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 2000,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: "Too many requests, please try again later" },
+});
+app.use("/brand-assets", assetLimiter, brandAssetsStaticRouter);
 
 // Health check
 app.get("/api/health", (_req, res) => {

@@ -20,7 +20,7 @@
  */
 
 import { parse as parseHtml } from "node-html-parser";
-import { sanitizeUrl, sanitizePathParam } from "./sanitize";
+import { sanitizeUrl, sanitizePathParam, fetchNoRebind } from "./sanitize";
 import * as fs from "node:fs";
 import * as path from "node:path";
 
@@ -729,13 +729,16 @@ async function downloadAsset(
     const safeUrl = await sanitizeUrl(imageUrl);
     const controller = new AbortController();
     const timeout = setTimeout(function abortTimeout() { controller.abort(); }, 10000);
-    const resp = await fetch(safeUrl, {
+    // fetchNoRebind re-runs sanitizeUrl on every redirect hop; plain
+    // redirect:"follow" would let a permitted host bounce us to 127.0.0.1
+    // or a metadata endpoint with none of those checks reapplied
+    // (CodeQL js/request-forgery).
+    const resp = await fetchNoRebind(safeUrl, {
       signal: controller.signal,
       headers: {
         "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
         "Accept": "image/*,*/*",
       },
-      redirect: "follow",
     });
     clearTimeout(timeout);
 
@@ -1122,13 +1125,13 @@ export async function generateTemplateFromUrl(
   try {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 15000);
-    const resp = await fetch(safeUrl, {
+    // Redirect hops are re-validated — see fetchNoRebind.
+    const resp = await fetchNoRebind(safeUrl, {
       headers: {
         "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
         "Accept": "text/html",
       },
       signal: controller.signal,
-      redirect: "follow",
     });
     clearTimeout(timeout);
     html = await resp.text();

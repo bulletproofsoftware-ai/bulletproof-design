@@ -43,6 +43,23 @@ function hostnameFromUrl(url: string): string {
   }
 }
 
+/**
+ * Return `url` only if it is http(s); otherwise undefined.
+ *
+ * fetchedUrl is whatever the operator typed into the import box and it is fed
+ * straight into an href. `javascript:` and `data:` URLs execute on click, so
+ * an operator pasting a crafted link would run it in the admin origin
+ * (CodeQL js/xss-through-dom). Omitting the attribute renders an inert anchor.
+ */
+function httpHrefOrUndefined(url: string): string | undefined {
+  try {
+    const { protocol } = new URL(url);
+    return protocol === "http:" || protocol === "https:" ? url : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
 export default function ImportPage() {
   const [url, setUrl] = useState("");
   const [fetchedUrl, setFetchedUrl] = useState("");
@@ -170,7 +187,7 @@ export default function ImportPage() {
             <div className="flex items-center justify-between border-b border-border px-4 py-2.5">
               <div className="flex items-center gap-3">
                 <span className="text-sm font-medium">{hostnameFromUrl(fetchedUrl)}</span>
-                <a href={fetchedUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs text-primary hover:underline">
+                <a href={httpHrefOrUndefined(fetchedUrl)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs text-primary hover:underline">
                   Open <ExternalLink className="size-3" />
                 </a>
               </div>

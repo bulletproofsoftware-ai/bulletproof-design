@@ -165,9 +165,19 @@ export default function ConfiguratorPage() {
   }
 
   function randomize() {
-    // crypto.getRandomValues used instead of Math.random for unpredictable selection
-    const randomIndex = crypto.getRandomValues(new Uint32Array(1))[0] % PRESET_PALETTES.length;
-    const preset = PRESET_PALETTES[randomIndex];
+    // crypto.getRandomValues used instead of Math.random for unpredictable
+    // selection. Rejection sampling rather than a bare `% length`: 2^32 is not
+    // a multiple of the palette count, so the plain modulo makes the first
+    // (2^32 % length) presets marginally likelier than the rest
+    // (CodeQL js/biased-cryptographic-random). Discarding the short tail
+    // removes the bias; the loop retries with probability < 1 in 2^22 here.
+    const count = PRESET_PALETTES.length;
+    const limit = Math.floor(0x1_0000_0000 / count) * count;
+    let draw: number;
+    do {
+      draw = crypto.getRandomValues(new Uint32Array(1))[0];
+    } while (draw >= limit);
+    const preset = PRESET_PALETTES[draw % count];
     applyPreset(preset);
   }
 

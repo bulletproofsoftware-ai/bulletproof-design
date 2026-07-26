@@ -139,3 +139,40 @@ export async function sanitizeUrl(urlString: string): Promise<string> {
 
   return parsed.href;
 }
+
+/**
+ * fetch() that re-validates every redirect hop with {@link sanitizeUrl}.
+ *
+ * sanitizeUrl checks the scheme, rejects embedded credentials, blocks private
+ * and link-local ranges and resolves the hostname to defeat DNS rebinding —
+ * but it only ever sees the URL the caller passed. With `redirect: "follow"`
+ * the runtime chases 3xx responses itself, so a permitted host could answer
+ * `302 Location: http://127.0.0.1/...` (or a cloud metadata endpoint) and the
+ * request would be made with none of those checks applied to the new target.
+ *
+ * Redirects are therefore followed manually, with each hop passed back through
+ * sanitizeUrl before it is requested.
+ */
+export async function fetchNoRebind(
+  url: string,
+  init: RequestInit = {},
+  maxRedirects = 5,
+): Promise<Response> {
+  let current = await sanitizeUrl(url);
+
+  for (let hop = 0; hop <= maxRedirects; hop++) {
+    const response = await fetch(current, { ...init, redirect: "manual" });
+
+    if (response.status < 300 || response.status > 399) return response;
+
+    const location = response.headers.get("location");
+    if (!location) return response;
+
+    // Resolve relative Location headers against the current URL, then run the
+    // whole thing through the same checks the original target had to pass.
+    const next = new URL(location, current).href;
+    current = await sanitizeUrl(next);
+  }
+
+  throw new Error("Invalid URL: too many redirects");
+}

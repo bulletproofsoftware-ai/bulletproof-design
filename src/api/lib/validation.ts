@@ -25,6 +25,13 @@ export function validateParam(param: unknown): param is string {
  * Rejects control characters and excessively long input.
  */
 export function validateSearchQuery(query: string): boolean {
+  // Express gives `string | string[]` for a repeated query parameter, so
+  // ?q=a&q=b arrives as an array. Without this guard `.length` measures the
+  // number of values rather than the text, and `.test()` coerces the array to
+  // a comma-joined string — a two-element array of 150 chars each passes a
+  // check meant to cap input at 200 (CodeQL
+  // js/type-confusion-through-parameter-tampering).
+  if (typeof query !== "string") return false;
   // eslint-disable-next-line no-control-regex
   return query.length <= 200 && !/[\x00-\x1f]/.test(query);
 }

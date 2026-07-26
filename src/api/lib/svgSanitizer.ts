@@ -329,6 +329,31 @@ export interface SanitizeResult {
  *   - Input exceeding MAX_SVG_BYTES.
  *   - Output that contains no `<svg>` root (input was not a valid SVG).
  */
+/**
+ * Apply `re` until the string stops changing.
+ *
+ * A single pass is not enough when the pattern spans multiple characters,
+ * because removing one match can splice the surrounding text into a fresh one.
+ * Concretely, one pass over
+ *
+ *     <scr<script>ipt>alert(1)</script>ipt>alert(2)</script>
+ *
+ * removes the inner span and leaves `<script>alert(2)</script>` fully intact —
+ * the pre-pass hands sanitize-html exactly the element it was meant to strip
+ * (CodeQL js/incomplete-multi-character-sanitization). Iterating to a fixed
+ * point removes it. The string shrinks on every iteration that changes it, so
+ * this terminates.
+ */
+function stripUntilStable(value: string, re: RegExp): string {
+  let out = value;
+  let previous: string;
+  do {
+    previous = out;
+    out = out.replace(re, "");
+  } while (out !== previous);
+  return out;
+}
+
 export function sanitizeSvg(input: Buffer | string): SanitizeResult {
   const raw = typeof input === "string" ? input : input.toString("utf-8");
 
@@ -349,15 +374,15 @@ export function sanitizeSvg(input: Buffer | string): SanitizeResult {
   //     `<script>`, so a simple allowlist wouldn't drop the child text node.
   //     We also pre-strip uppercase/mixed-case `<SCRIPT>` so the text
   //     content doesn't survive.
-  prePass = prePass.replace(
+  prePass = stripUntilStable(
+    prePass,
     /<\s*[a-zA-Z][\w-]*:script\b[\s\S]*?<\s*\/\s*[a-zA-Z][\w-]*:script[^>]*>/gi,
-    "",
   );
   // Case-insensitive <script>…</script> — sanitize-html's nonTextTags is
   // case-sensitive under `lowerCaseTags:false`, so we pre-strip here.
-  prePass = prePass.replace(
+  prePass = stripUntilStable(
+    prePass,
     /<\s*script\b[\s\S]*?<\s*\/\s*script[^>]*>/gi,
-    "",
   );
   // Same for <style>, <iframe>, <embed>, <object>, <foreignObject>, <form>,
   // <input>, <button>, <meta>, <link>, <textarea>, <select>, <noscript>,
@@ -386,10 +411,10 @@ export function sanitizeSvg(input: Buffer | string): SanitizeResult {
       `<\\s*${tag}\\b[\\s\\S]*?<\\s*/\\s*${tag}[^>]*>`,
       "gi",
     );
-    prePass = prePass.replace(paired, "");
+    prePass = stripUntilStable(prePass, paired);
     // Self-closing or unclosed variants.
     const selfClosing = new RegExp(`<\\s*${tag}\\b[^>]*/?>`, "gi");
-    prePass = prePass.replace(selfClosing, "");
+    prePass = stripUntilStable(prePass, selfClosing);
   }
 
   // 2. Run through sanitize-html with the SVG allowlist.

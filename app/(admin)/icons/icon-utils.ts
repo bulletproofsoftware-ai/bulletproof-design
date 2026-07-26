@@ -99,7 +99,14 @@ export function buildInlineJsxSnippet(
 
   // Strip XML prolog and any HTML/XML comments — not valid in JSX.
   body = body.replace(/^<\?xml[^>]*\?>\s*/i, "");
-  body = body.replace(/<!--[\s\S]*?-->/g, "");
+  // Iterate: removing one comment can splice the remaining text into another,
+  // so `<!--<!--x-->-->` is not cleared by a single pass
+  // (CodeQL js/incomplete-multi-character-sanitization).
+  let previousBody: string;
+  do {
+    previousBody = body;
+    body = body.replace(/<!--[\s\S]*?-->/g, "");
+  } while (body !== previousBody);
 
   // Apply a small set of HTML→JSX attribute renames. We deliberately keep
   // this conservative — Material Symbols SVGs use a tiny attribute surface.

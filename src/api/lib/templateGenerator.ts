@@ -42,7 +42,18 @@ function isChallengePage(html: string): boolean {
   ];
   const hasMarker = markers.some((m) => lower.includes(m));
   // Also flag pages with very little text content
-  const textContent = html.replace(/<[^>]+>/g, "").replace(/\s+/g, " ").trim();
+  // Iterate the tag strip: removing one tag can join the surrounding text into
+  // a new one, so `<<a>a href=x>` is not cleared in a single pass. This only
+  // feeds a length heuristic rather than any output, but an under-stripped
+  // string inflates the count and can mask a block page
+  // (CodeQL js/incomplete-multi-character-sanitization).
+  let stripped = html;
+  let previousStripped: string;
+  do {
+    previousStripped = stripped;
+    stripped = stripped.replace(/<[^>]+>/g, "");
+  } while (stripped !== previousStripped);
+  const textContent = stripped.replace(/\s+/g, " ").trim();
   const tooShort = textContent.length < 200;
   return hasMarker || tooShort;
 }

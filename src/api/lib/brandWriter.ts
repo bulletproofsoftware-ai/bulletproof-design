@@ -126,8 +126,15 @@ export function writeBrandSync(brand: BrandConfig): { path: string } {
     "utf-8",
   );
 
-  if (!fs.existsSync(guidelinesPath)) {
-    fs.writeFileSync(guidelinesPath, DEFAULT_GUIDELINES, "utf-8");
+  // Exclusive create rather than exists-then-write: between the two calls another
+  // writer can create the file and have it silently overwritten
+  // (CodeQL js/file-system-race). `wx` makes the check and the write one atomic
+  // operation; EEXIST simply means someone else authored it, which is the
+  // outcome the guard wanted.
+  try {
+    fs.writeFileSync(guidelinesPath, DEFAULT_GUIDELINES, { encoding: "utf-8", flag: "wx" });
+  } catch (err) {
+    if ((err as NodeJS.ErrnoException).code !== "EEXIST") throw err;
   }
 
   return { path: brandJsonPath };

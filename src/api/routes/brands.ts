@@ -985,14 +985,20 @@ router.delete(
         const { path: brandJsonPath, config } = parsed;
 
         const logosObj: Logos = { ...(config.logos ?? {}) };
-        const existing = logosObj[key];
-        if (!existing) {
+        // `key` is already allowlisted by isLogoKey above; re-deriving it from
+        // LOGO_KEYS makes the value that indexes the object provably a constant
+        // rather than request data (CodeQL js/remote-property-injection), and
+        // Object.hasOwn avoids matching inherited properties such as
+        // "constructor" that a truthiness check would treat as registered.
+        const safeKey = LOGO_KEYS.find((k) => k === key);
+        if (!safeKey || !Object.hasOwn(logosObj, safeKey)) {
           throw Object.assign(new Error("Logo key not registered"), {
             _status: 404,
           });
         }
+        const existing = logosObj[safeKey]!;
 
-        delete logosObj[key];
+        delete logosObj[safeKey];
         const nextConfig: BrandConfig = { ...config, logos: logosObj };
         delete nextConfig._source;
         await writeBrandJsonAtomic(brandJsonPath, nextConfig);

@@ -15,7 +15,7 @@
  *     during Jest runs.
  */
 
-import { readFileSync, statSync } from "fs";
+import { closeSync, fstatSync, openSync, readFileSync, statSync } from "fs";
 import { resolve } from "path";
 import type { ComponentSpec } from "../../../lib/types/api";
 
@@ -64,8 +64,19 @@ export function createComponentIndex(registryPath: string = DEFAULT_REGISTRY_PAT
 
   function loadSync(): void {
     try {
-      const stat = statSync(registryPath);
-      const raw = readFileSync(registryPath, "utf8");
+      // stat-then-read on a path is two lookups of a name that can be replaced in
+      // between (CodeQL js/file-system-race). Open once and take both the stat and
+      // the contents from that single descriptor, so they always describe the same
+      // file.
+      const fd = openSync(registryPath, "r");
+      let stat: ReturnType<typeof fstatSync>;
+      let raw: string;
+      try {
+        stat = fstatSync(fd);
+        raw = readFileSync(fd, "utf8");
+      } finally {
+        closeSync(fd);
+      }
       const parsed = JSON.parse(raw) as { components?: ComponentSpec[] };
       const items = Array.isArray(parsed.components) ? parsed.components : [];
       // Normalize: guarantee every entry is a plain object with a name/tier.

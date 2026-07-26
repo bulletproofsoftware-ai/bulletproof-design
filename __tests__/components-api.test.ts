@@ -17,8 +17,8 @@
  * router on a random port keeps the tests deterministic and isolated.
  */
 
-import { resolve } from "path";
-import { readFileSync, writeFileSync } from "fs";
+import { resolve, join } from "path";
+import { mkdtempSync, readFileSync, writeFileSync } from "fs";
 import { tmpdir } from "os";
 import type { AddressInfo } from "net";
 
@@ -122,7 +122,12 @@ describe("componentIndex (unit)", () => {
   });
 
   test("tolerates a missing registry file (empty result, no throw)", () => {
-    const missing = resolve(tmpdir(), `no-such-registry-${Date.now()}.json`);
+    // Named inside a mkdtempSync directory rather than directly in tmpdir():
+    // a `${Date.now()}` name is guessable, so another user on the machine
+    // could pre-create or symlink it (CodeQL js/insecure-temporary-file).
+    // The file itself is deliberately never created — that is the case
+    // under test.
+    const missing = resolve(mkdtempSync(join(tmpdir(), "reg-")), "no-such-registry.json");
     const index = createComponentIndex(missing);
     expect(index.all()).toEqual([]);
     expect(index.get("Button")).toBeUndefined();
@@ -130,7 +135,7 @@ describe("componentIndex (unit)", () => {
   });
 
   test("tolerates a malformed registry file (empty result, no throw)", () => {
-    const bad = resolve(tmpdir(), `bad-registry-${Date.now()}.json`);
+    const bad = resolve(mkdtempSync(join(tmpdir(), "reg-")), "bad-registry.json");
     writeFileSync(bad, "{not valid json", "utf8");
     const index = createComponentIndex(bad);
     expect(index.all()).toEqual([]);

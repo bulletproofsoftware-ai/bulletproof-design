@@ -44,10 +44,31 @@ app.use(helmet({
 app.disable("x-powered-by");
 
 // Middleware
+//
+// `origin: true` reflects whatever Origin the caller sent, and paired with
+// `credentials: true` that let any website make credentialed cross-origin
+// requests to this API and read the responses. It only applied outside
+// production, but the branch shipped (CodeQL js/cors-permissive-configuration).
+//
+// Origins are now matched against an explicit list. Outside production,
+// loopback origins on any port are additionally allowed so a dev server on an
+// arbitrary port still works — that is the convenience `true` was there for,
+// without extending it to the whole internet.
+const CORS_ALLOWLIST = (process.env.CORS_ORIGIN || "http://localhost:8095")
+  .split(",")
+  .map((o) => o.trim())
+  .filter(Boolean);
+const IS_PRODUCTION = process.env.NODE_ENV === "production";
+const LOOPBACK_ORIGIN = /^https?:\/\/(?:localhost|127\.0\.0\.1|\[::1\])(?::\d+)?$/;
+
 app.use(cors({
-  origin: process.env.NODE_ENV === "production"
-    ? (process.env.CORS_ORIGIN || "http://localhost:8095").split(",")
-    : true,
+  origin(origin, callback) {
+    // No Origin header: same-origin navigations, curl, server-to-server.
+    if (!origin) return callback(null, true);
+    if (CORS_ALLOWLIST.includes(origin)) return callback(null, true);
+    if (!IS_PRODUCTION && LOOPBACK_ORIGIN.test(origin)) return callback(null, true);
+    return callback(null, false);
+  },
   credentials: true,
 }));
 app.use(express.json({ limit: "1mb" }));
@@ -85,10 +106,32 @@ app.use("/api", (req, res, next) => {
   return readLimiter(req, res, next);
 });
 
+/**
+ * Render an untrusted value safe for a single log line.
+ *
+ * req.originalUrl is attacker-controlled. Logged verbatim, a CR/LF in it
+ * appends further lines to the audit log, so a request can forge entries for
+ * operations that never happened (CodeQL js/log-injection).
+ */
+function logSafe(value: unknown, limit = 300): string {
+  const text = String(value)
+    .replace(/\r/g, "\\r")
+    .replace(/\n/g, "\\n")
+    // Remaining control characters, written as \x escapes rather than
+    // literal bytes so the pattern survives copy/paste and review.
+    // eslint-disable-next-line no-control-regex
+    .replace(/[\x00-\x1f\x7f]/g, (c) =>
+      `\\x${c.charCodeAt(0).toString(16).padStart(2, "0")}`,
+    );
+  return text.length > limit ? `${text.slice(0, limit)}\u2026` : text;
+}
+
 // Audit logging for security-critical operations
 app.use((req, _res, next) => {
   if (["POST", "PUT", "DELETE"].includes(req.method)) {
-    console.log(`[audit] ${new Date().toISOString()} ${req.method} ${req.originalUrl} from ${req.ip}`);
+    console.log(
+      `[audit] ${new Date().toISOString()} ${req.method} ${logSafe(req.originalUrl)} from ${logSafe(req.ip)}`,
+    );
   }
   next();
 });

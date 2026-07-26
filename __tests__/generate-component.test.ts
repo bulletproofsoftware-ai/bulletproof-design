@@ -1,5 +1,12 @@
 import { describe, it, expect, afterEach } from "@jest/globals";
-import { existsSync, readFileSync, rmSync, mkdirSync, writeFileSync } from "fs";
+import {
+  existsSync,
+  readFileSync,
+  rmSync,
+  mkdirSync,
+  mkdtempSync,
+  writeFileSync,
+} from "fs";
 import { resolve, join } from "path";
 import { tmpdir } from "os";
 import {
@@ -90,7 +97,11 @@ describe("extractComponentName", () => {
 /* ───────────── Fuzzy Matching ───────────── */
 
 describe("findSimilarComponents", () => {
-  const tmpDir = resolve(tmpdir(), "gen-test-registry-" + Date.now());
+  // mkdtempSync creates the directory atomically with a random suffix at 0700.
+  // resolve(tmpdir(), "..." + Date.now()) is guessable, so another user on the
+  // machine could pre-create or symlink the path between the name being chosen
+  // and it being written (CodeQL js/insecure-temporary-file).
+  const tmpDir = mkdtempSync(join(tmpdir(), "gen-test-registry-"));
   const registryPath = resolve(tmpDir, "registry.json");
 
   afterEach(() => {
@@ -126,7 +137,8 @@ describe("findSimilarComponents", () => {
 /* ───────────── File Generation ───────────── */
 
 describe("generateComponent", () => {
-  const tmpBase = resolve(tmpdir(), "gen-test-" + Date.now());
+  // Atomic 0700 create with a random suffix — see the note above.
+  const tmpBase = mkdtempSync(join(tmpdir(), "gen-test-"));
   const dirs: string[] = [];
 
   afterEach(() => {

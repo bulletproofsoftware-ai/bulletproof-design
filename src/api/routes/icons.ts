@@ -13,6 +13,8 @@
 
 import { Router, Request, Response } from "express";
 import * as fs from "fs";
+import * as path from "node:path";
+import { resolveWithin } from "../lib/sanitize";
 import {
   getIconIndex,
   isValidIconName,
@@ -221,7 +223,10 @@ router.get("/:name/svg", publicAccess, (req: Request, res: Response) => {
 
   let svg: string;
   try {
-    svg = fs.readFileSync(svgPath, "utf-8");
+    // Re-assert containment on the exact path handed to the filesystem. The
+    // index already refuses to resolve outside the icons root, but the guarantee
+    // has to hold at the sink for it to be one (CodeQL js/path-injection).
+    svg = fs.readFileSync(resolveWithin(index.rootDir, path.relative(index.rootDir, svgPath)), "utf-8");
   } catch {
     res.status(404).json({ error: "Style not available", name, style });
     return;

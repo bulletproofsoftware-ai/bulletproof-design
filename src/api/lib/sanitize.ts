@@ -6,6 +6,26 @@
  */
 
 import { lookup as dnsLookup } from "node:dns/promises";
+import * as path from "node:path";
+
+/**
+ * Resolve `candidate` against `root` and prove the result stays inside `root`.
+ *
+ * Containment must be asserted on the *final* path that reaches the filesystem
+ * call, not on the directory it was built from: checking the parent and then
+ * appending a segment leaves the appended segment unchecked, and it is also
+ * invisible to dataflow analysis (CodeQL js/path-injection).
+ *
+ * Returns the resolved absolute path; throws if it escapes.
+ */
+export function resolveWithin(root: string, ...candidate: string[]): string {
+  const resolvedRoot = path.resolve(root);
+  const resolved = path.resolve(resolvedRoot, ...candidate);
+  if (resolved !== resolvedRoot && !resolved.startsWith(resolvedRoot + path.sep)) {
+    throw new Error("Path escapes its permitted root");
+  }
+  return resolved;
+}
 
 /**
  * Sanitizes a path parameter by rejecting traversal sequences, null bytes,

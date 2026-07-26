@@ -2,7 +2,7 @@ import { Router, Request, Response } from "express";
 import * as fs from "fs";
 import * as path from "path";
 import { validateParam, validateFilename, validateStringLength, MAX_RESULTS } from "../lib/validation";
-import { sanitizePathParam } from "../lib/sanitize";
+import { resolveWithin, sanitizePathParam } from "../lib/sanitize";
 import { publicAccess, requireApiKey } from "../middleware/auth";
 import { logAudit } from "../lib/auditLogger";
 
@@ -117,15 +117,21 @@ router.post("/", requireApiKey, (req: Request, res: Response) => {
     res.status(400).json({ error: "Invalid folder path" });
     return;
   }
-  const targetDir = path.resolve(ASSETS_DIR, sanitizedFolder);
-  if (!targetDir.startsWith(path.resolve(ASSETS_DIR) + path.sep)) {
+  const safeName = filename.replace(/[^a-zA-Z0-9_.-]/g, "");
+  // Containment is asserted on the FINAL path, not just the directory: the old
+  // check validated targetDir and then appended safeName unchecked, which left
+  // the appended segment outside the guarantee (CodeQL js/path-injection).
+  let targetDir: string;
+  let filePath: string;
+  try {
+    targetDir = resolveWithin(ASSETS_DIR, sanitizedFolder);
+    filePath = resolveWithin(ASSETS_DIR, sanitizedFolder, safeName);
+  } catch {
     res.status(400).json({ error: "Invalid folder path" });
     return;
   }
   try {
     fs.mkdirSync(targetDir, { recursive: true });
-    const safeName = filename.replace(/[^a-zA-Z0-9_.-]/g, "");
-    const filePath = path.join(targetDir, safeName);
     const buffer = Buffer.from(data, "base64");
     fs.writeFileSync(filePath, buffer);
     const stat = fs.statSync(filePath);

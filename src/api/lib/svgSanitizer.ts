@@ -272,7 +272,10 @@ function postPassScrub(input: string): string {
   // (CodeQL js/incomplete-multi-character-sanitization.)
   out = replaceToFixpoint(out, [
     // Namespaced or oddly-cased <script>...</script>, whole element.
-    /<\s*(?:[a-zA-Z][\w-]*:)?script\b[\s\S]*?<\s*\/\s*(?:[a-zA-Z][\w-]*:)?script\s*>/gi,
+    // `[^>]*` after the tag name, not `\s*`: HTML lets a close tag carry junk
+    // (`</script\t\n bar>`), and a pattern that only tolerates whitespace misses
+    // it (CodeQL js/bad-tag-filter).
+    /<\s*(?:[a-zA-Z][\w-]*:)?script\b[\s\S]*?<\s*\/\s*(?:[a-zA-Z][\w-]*:)?script[^>]*>/gi,
     // Self-closing / malformed <script> with no matching close.
     /<\s*(?:[a-zA-Z][\w-]*:)?script\b[^>]*>/gi,
     // Residual `on*=...` regardless of case/whitespace:
@@ -347,13 +350,13 @@ export function sanitizeSvg(input: Buffer | string): SanitizeResult {
   //     We also pre-strip uppercase/mixed-case `<SCRIPT>` so the text
   //     content doesn't survive.
   prePass = prePass.replace(
-    /<\s*[a-zA-Z][\w-]*:script\b[\s\S]*?<\s*\/\s*[a-zA-Z][\w-]*:script\s*>/gi,
+    /<\s*[a-zA-Z][\w-]*:script\b[\s\S]*?<\s*\/\s*[a-zA-Z][\w-]*:script[^>]*>/gi,
     "",
   );
   // Case-insensitive <script>…</script> — sanitize-html's nonTextTags is
   // case-sensitive under `lowerCaseTags:false`, so we pre-strip here.
   prePass = prePass.replace(
-    /<\s*script\b[\s\S]*?<\s*\/\s*script\s*>/gi,
+    /<\s*script\b[\s\S]*?<\s*\/\s*script[^>]*>/gi,
     "",
   );
   // Same for <style>, <iframe>, <embed>, <object>, <foreignObject>, <form>,
@@ -380,7 +383,7 @@ export function sanitizeSvg(input: Buffer | string): SanitizeResult {
   ];
   for (const tag of DANGEROUS_TAGS) {
     const paired = new RegExp(
-      `<\\s*${tag}\\b[\\s\\S]*?<\\s*/\\s*${tag}\\s*>`,
+      `<\\s*${tag}\\b[\\s\\S]*?<\\s*/\\s*${tag}[^>]*>`,
       "gi",
     );
     prePass = prePass.replace(paired, "");

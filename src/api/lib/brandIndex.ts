@@ -20,6 +20,7 @@ import {
   isRoleGroupedColors,
   extractPrimaryColor,
 } from "../../../lib/types/brand";
+import { resolveWithin } from "./sanitize";
 
 // Re-export the shared types so existing importers (`../lib/brandIndex`)
 // keep working without code changes.
@@ -377,7 +378,17 @@ export function getBrandAssetFiles(
 ): string[] {
   const brand = getBySlug(slug);
   if (!brand || brand._source !== "directory") return [];
-  const assetsDir = path.join(path.resolve(brandsDir), slug, "assets");
+  // The getBySlug lookup above already means an unknown slug returns early,
+  // but the directory was still assembled from the raw slug without the
+  // result being checked. Assert containment on the path that reaches
+  // readdirSync rather than relying on the lookup to have covered it
+  // (CodeQL js/path-injection).
+  let assetsDir: string;
+  try {
+    assetsDir = resolveWithin(path.resolve(brandsDir), slug, "assets");
+  } catch {
+    return [];
+  }
   try {
     const entries = fs.readdirSync(assetsDir, { withFileTypes: true });
     return entries.filter((e) => e.isFile()).map((e) => e.name).sort();

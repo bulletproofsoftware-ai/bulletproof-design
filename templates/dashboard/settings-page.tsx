@@ -311,7 +311,7 @@ export default function SettingsPage() {
                   </label>
                   <input
                     type="text"
-                    defaultValue="Marc"
+                    defaultValue="Alex"
                     style={{
                       width: "100%",
                       padding: "9px 12px",
@@ -373,7 +373,7 @@ export default function SettingsPage() {
                 </label>
                 <input
                   type="email"
-                  defaultValue="marc@acme.com"
+                  defaultValue="alex@acme.com"
                   style={{
                     width: "100%",
                     padding: "9px 12px",

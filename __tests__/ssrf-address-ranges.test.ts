@@ -14,7 +14,12 @@
  */
 import { jest } from "@jest/globals";
 
-const lookupMock = jest.fn();
+type LookupAnswer = { address: string; family: number };
+
+// Typed explicitly: a bare jest.fn() infers its resolved value as `never`,
+// which passes at runtime but fails `npm run typecheck` in CI.
+const lookupMock =
+  jest.fn<(hostname: string, options: { all: true }) => Promise<LookupAnswer[]>>();
 
 jest.unstable_mockModule("node:dns/promises", () => ({
   lookup: lookupMock,

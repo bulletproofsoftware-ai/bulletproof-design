@@ -22,7 +22,8 @@
     "test": "node --experimental-vm-modules node_modules/.bin/jest --forceExit",
     "lint": "eslint .",
     "prepare": "husky",
-    "pretest": "npm run generate:tokens"
+    "pretest": "npm run generate:tokens",
+    "postinstall": "patch-package"
   },
   "lint-staged": {
     "*.{ts,tsx}": [
@@ -108,7 +109,7 @@
     "hono": "^4.12.27",
     "@hono/node-server": "^2.0.5",
     "fast-uri": "^3.1.4",
-    "js-yaml": "^3.15.0",
+    "js-yaml": "^5.2.2",
     "sharp": "^0.35.0"
   },
   "devDependencies": {
@@ -135,6 +136,7 @@
     "jest-axe": "^10.0.0",
     "jest-environment-jsdom": "^30.4.1",
     "lint-staged": "^16.4.0",
+    "patch-package": "^8.0.1",
     "postcss": "^8.5.18",
     "style-dictionary": "^5.5.0",
     "tailwindcss": "^4.1.0",

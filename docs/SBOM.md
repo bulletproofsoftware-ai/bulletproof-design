@@ -448,4 +448,4 @@ For supply chain or dependency concerns:
 - Review `package-lock.json` for exact transitive versions
 - Run `npm audit` for current vulnerability status
 - Check `sbom.cdx.json` for licensed component list
-- File security issues: security@example.com
+- File security issues: marc@bulletproofsoftware.ai

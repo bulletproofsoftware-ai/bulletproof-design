@@ -60,6 +60,12 @@ export function sanitizePathParam(param: string): string {
  * Checks whether an IP address falls within private/reserved ranges.
  */
 function isPrivateIp(ip: string): boolean {
+  // ::ffff:127.0.0.1 reaches the same host as 127.0.0.1, but matches neither
+  // /^127\./ nor /^::1$/, so an IPv4-mapped address has to be unwrapped before
+  // the IPv4 patterns below are applied to it.
+  const mapped = /^::ffff:(\d{1,3}(?:\.\d{1,3}){3})$/i.exec(ip);
+  const candidate = mapped ? mapped[1] : ip;
+
   const privatePatterns = [
     /^127\./,
     /^10\./,
@@ -67,13 +73,20 @@ function isPrivateIp(ip: string): boolean {
     /^192\.168\./,
     /^0\./,
     /^169\.254\./,       // link-local
+    // 100.64.0.0/10 — CGNAT, and the range Tailscale hands out. Reaches hosts
+    // on the operator's overlay network that are not meant to be fetchable.
+    /^100\.(6[4-9]|[7-9]\d|1[01]\d|12[0-7])\./,
+    /^198\.1[89]\./,     // 198.18.0.0/15 benchmarking
+    /^(22[4-9]|23\d)\./, // 224.0.0.0/4 multicast
+    /^(24\d|25[0-5])\./, // 240.0.0.0/4 reserved, incl. 255.255.255.255
     /^::1$/,             // IPv6 loopback
+    /^::$/,              // IPv6 unspecified
     /^fc/,               // IPv6 unique local
     /^fd/,               // IPv6 unique local
     /^fe80:/,            // IPv6 link-local
   ];
   for (const pattern of privatePatterns) {
-    if (pattern.test(ip)) return true;
+    if (pattern.test(candidate)) return true;
   }
   return false;
 }
@@ -125,11 +138,27 @@ export async function sanitizeUrl(urlString: string): Promise<string> {
     }
   }
 
-  // DNS rebinding protection — resolve hostname and check the actual IP
+  // Resolve the hostname and reject if any answer is internal.
+  //
+  // `all: true` matters: the single-address form returns whichever answer the
+  // resolver happened to order first, so a host publishing both a public and a
+  // private A record could pass this check on the public one and still be
+  // connected to on the private one.
+  //
+  // This narrows DNS rebinding but does not eliminate it: fetch() resolves the
+  // hostname again when it opens the socket, and that resolution is not this
+  // one. Closing that window needs the connection pinned to a validated
+  // address, which in Node means a custom dispatcher (undici Agent with a
+  // `connect.lookup` that validates), and undici is not currently a dependency.
   try {
-    const result = await dnsLookup(hostname);
-    if (isPrivateIp(result.address)) {
-      throw new Error("Invalid URL: resolved to a private or reserved IP address");
+    const results = await dnsLookup(hostname, { all: true });
+    if (results.length === 0) {
+      throw new Error("Invalid URL: could not resolve hostname");
+    }
+    for (const result of results) {
+      if (isPrivateIp(result.address)) {
+        throw new Error("Invalid URL: resolved to a private or reserved IP address");
+      }
     }
   } catch (err: unknown) {
     // Re-throw our own errors; treat DNS failures as blocked
@@ -144,8 +173,10 @@ export async function sanitizeUrl(urlString: string): Promise<string> {
  * fetch() that re-validates every redirect hop with {@link sanitizeUrl}.
  *
  * sanitizeUrl checks the scheme, rejects embedded credentials, blocks private
- * and link-local ranges and resolves the hostname to defeat DNS rebinding —
- * but it only ever sees the URL the caller passed. With `redirect: "follow"`
+ * and link-local ranges and resolves the hostname to reject hosts that answer
+ * with an internal address — but it only ever sees the URL the caller passed,
+ * and its resolution is not the one fetch() uses to open the socket, so a
+ * rebinding server can still answer the two differently. With `redirect: "follow"`
  * the runtime chases 3xx responses itself, so a permitted host could answer
  * `302 Location: http://127.0.0.1/...` (or a cloud metadata endpoint) and the
  * request would be made with none of those checks applied to the new target.

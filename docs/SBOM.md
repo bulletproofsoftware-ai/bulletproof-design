@@ -25,7 +25,7 @@ All pinned to exact versions (no `^` or `~` until first release).
 |---------|---------|---------|---------|--------|
 | `@babel/standalone` | 7.29.2 | MIT | ESM/JSX transpilation for dynamic expressions | ✅ Audited |
 | `gray-matter` | 4.0.3 | MIT | YAML frontmatter parsing for brand guidelines | ✅ Audited |
-| `markdown-it` | 14.1.1 | MIT | Markdown → HTML for guidelines prose | ✅ Audited |
+| `markdown-it` | 14.3.0 | MIT | Markdown → HTML for guidelines prose | ✅ Audited |
 
 ### Data Validation & Schema
 
@@ -38,8 +38,8 @@ All pinned to exact versions (no `^` or `~` until first release).
 
 | Package | Version | License | Purpose | Status |
 |---------|---------|---------|---------|--------|
-| `multer` | 2.1.1 | MIT | Form data multipart parsing for file uploads | ✅ Audited |
-| `sanitize-html` | 2.17.3 | CC0-1.0 | SVG & HTML sanitization (XSS prevention) | ✅ Audited |
+| `multer` | 2.2.0 | MIT | Form data multipart parsing for file uploads | ✅ Audited |
+| `sanitize-html` | 2.17.5 | CC0-1.0 | SVG & HTML sanitization (XSS prevention) | ✅ Audited |
 | `slugify` | 1.6.9 | MIT | Convert strings to URL-safe slugs | ✅ Audited |
 
 ### Concurrency & Performance
@@ -74,16 +74,16 @@ design-library
 ├── gray-matter (4.0.3)
 │   └── js-yaml (0.3.13)
 │
-├── markdown-it (14.1.1)
+├── markdown-it (14.3.0)
 │   └── no production transitive deps
 │
-├── multer (2.1.1)
+├── multer (2.2.0)
 │   └── busboy, type, append-field, on-finished, utils-merge
 │
 ├── p-limit (3.1.0)
 │   └── yocto-queue (0.1.0)
 │
-├── sanitize-html (2.17.3)
+├── sanitize-html (2.17.5)
 │   └── htmlparser2, isomorphic-unfetch, parse-src, postcss-selector-parser
 │
 └── slugify (1.6.9)
@@ -118,7 +118,7 @@ audited 550 packages in 8.342s
 | ajv | None (v8.18.0 patched) | 2024-03 | evpoberezkin |
 | sanitize-html | None | 2024-09 | Maintained, regular updates |
 | markdown-it | None | 2024-11 | Maintained |
-| multer | None (v2.1.1+) | 2024-08 | Express.js team |
+| multer | None (v2.2.0+) | 2024-08 | Express.js team |
 | gray-matter | None | 2023-11 | Maintained |
 | @tanstack/react-virtual | None | 2025-01 | TanStack (active) |
 | p-limit | None | 2024-06 | Sindre Sorhus |
@@ -148,10 +148,10 @@ All new dependencies pinned to exact versions in `package.json`:
     "ajv": "8.18.0",
     "ajv-formats": "3.0.1",
     "gray-matter": "4.0.3",
-    "markdown-it": "14.1.1",
-    "multer": "2.1.1",
+    "markdown-it": "14.3.0",
+    "multer": "2.2.0",
     "p-limit": "3.1.0",
-    "sanitize-html": "2.17.3",
+    "sanitize-html": "2.17.5",
     "slugify": "1.6.9"
   }
 }

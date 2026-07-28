@@ -1,6 +1,7 @@
 import * as fs from "fs";
 import * as path from "path";
 import { generateStoryContent, getStoryPath } from "./storyGenerator";
+import { resolveWithin } from "./sanitize";
 
 const TEMPLATES_DIR = process.env.TEMPLATES_DIR ?? "./templates";
 const SRC_DIR = process.env.SRC_DIR ?? "./src";
@@ -20,16 +21,16 @@ export function writeTemplate(
   name: string,
   sourceCode: string
 ): WriteTemplateResult {
-  const categoryDir = path.resolve(TEMPLATES_DIR, category);
-  if (!categoryDir.startsWith(path.resolve(TEMPLATES_DIR))) {
-    throw new Error("Invalid path: directory traversal attempt");
-  }
+  // resolveWithin compares against `root + path.sep`. A bare
+  // startsWith(root) also accepts a *sibling* whose name merely begins with
+  // the root's — "templates-evil" satisfies startsWith("…/templates") — so the
+  // old check would have let a category of "../templates-evil" through.
+  // Unreachable today because every caller passes sanitizePathParam output,
+  // which rejects "/" and "..", but the guard should not depend on that.
+  const categoryDir = resolveWithin(TEMPLATES_DIR, category);
   fs.mkdirSync(categoryDir, { recursive: true });
 
-  const templatePath = path.join(categoryDir, `${name}.tsx`);
-  if (!path.resolve(templatePath).startsWith(path.resolve(TEMPLATES_DIR))) {
-    throw new Error("Invalid path: directory traversal attempt");
-  }
+  const templatePath = resolveWithin(TEMPLATES_DIR, category, `${name}.tsx`);
   fs.writeFileSync(templatePath, sourceCode, "utf-8");
 
   const storyContent = generateStoryContent(category, name);
@@ -50,10 +51,7 @@ export function writeTemplate(
  * Returns true if both files were removed, false if either did not exist.
  */
 export function deleteTemplate(category: string, name: string): boolean {
-  const templatePath = path.resolve(TEMPLATES_DIR, category, `${name}.tsx`);
-  if (!templatePath.startsWith(path.resolve(TEMPLATES_DIR))) {
-    throw new Error("Invalid path: directory traversal attempt");
-  }
+  const templatePath = resolveWithin(TEMPLATES_DIR, category, `${name}.tsx`);
   const storyPath = getStoryPath(SRC_DIR, category, name);
 
   let allDeleted = true;

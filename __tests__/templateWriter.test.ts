@@ -73,3 +73,29 @@ describe("deleteTemplate", () => {
     expect(result).toBe(false);
   });
 });
+
+describe("containment: sibling-prefix traversal", () => {
+  // A bare startsWith(root) also accepts a sibling whose name merely begins
+  // with the root's — path.resolve(TEMPLATES_DIR, "../<basename>-evil") lands
+  // outside the root while still satisfying startsWith. resolveWithin compares
+  // against `root + path.sep`, so these must throw.
+  const sibling = `../${path.basename(TMP_TEMPLATES)}-evil`;
+
+  test("writeTemplate rejects a category escaping to a sibling directory", () => {
+    expect(() => writeTemplate(sibling, "pwned", "// evil")).toThrow(/escapes its permitted root/i);
+  });
+
+  test("deleteTemplate rejects a category escaping to a sibling directory", () => {
+    expect(() => deleteTemplate(sibling, "pwned")).toThrow(/escapes its permitted root/i);
+  });
+
+  test("nothing was written outside the templates root", () => {
+    expect(fs.existsSync(`${TMP_TEMPLATES}-evil`)).toBe(false);
+  });
+
+  test("a normal category still works", () => {
+    const r = writeTemplate("legit-cat", "legit-template", "// ok");
+    expect(fs.existsSync(r.templatePath)).toBe(true);
+    expect(r.templatePath.startsWith(TMP_TEMPLATES + path.sep)).toBe(true);
+  });
+});

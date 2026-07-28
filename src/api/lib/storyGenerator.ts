@@ -3,7 +3,7 @@
  */
 
 import * as path from "path";
-import { sanitizePathParam } from "./sanitize";
+import { sanitizePathParam, resolveWithin } from "./sanitize";
 
 /**
  * Converts a kebab-case string to PascalCase.
@@ -72,11 +72,10 @@ export function getStoryPath(
   const safeCategory = sanitizePathParam(category);
   const safeName = sanitizePathParam(name);
   const pascalName = toPascalCase(safeName);
+  // Same sibling-prefix hazard as templateWriter: startsWith(base) without a
+  // trailing separator accepts "…/templates-evil". resolveWithin compares
+  // against `base + path.sep`.
+  resolveWithin(path.join(srcDir, "templates"), safeCategory, `${pascalName}.stories.tsx`);
   const storyPath = path.join(srcDir, "templates", safeCategory, `${pascalName}.stories.tsx`);
-  const resolvedPath = path.resolve(storyPath);
-  const resolvedBase = path.resolve(srcDir, "templates");
-  if (!resolvedPath.startsWith(resolvedBase)) {
-    throw new Error("Invalid path: directory traversal attempt");
-  }
   return storyPath;
 }

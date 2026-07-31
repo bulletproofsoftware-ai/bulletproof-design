@@ -79,7 +79,7 @@
     "cors": "^2.8.5",
     "eslint-config-next": "^16.2.12",
     "express": "^5.2.1",
-    "express-rate-limit": "^8.6.0",
+    "express-rate-limit": "^8.6.1",
     "glob": "^11.1.0",
     "gray-matter": "4.0.3",
     "helmet": "^8.1.0",
